@@ -1,8 +1,8 @@
-package-as: YOUR_ADDON
+package-as: BigInputBox
 enable-nolib-creation: no
 
 move-folders:
-    YOUR_ADDON/YOUR_ADDON: YOUR_ADDON
+    BigInputBox/BigInputBox: BigInputBox
 
 manual-changelog:
     filename: CHANGELOG.md
