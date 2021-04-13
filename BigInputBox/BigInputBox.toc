@@ -8,4 +8,6 @@
 ## SavedVariables: BigInputBox_DB
 ## X-License: MIT
 
-main.lua
+Api.lua
+BigInputBox.xml
+Main.lua

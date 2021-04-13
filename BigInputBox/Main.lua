@@ -81,12 +81,17 @@ end)({
 
 -- Lua API
 -----------------------------------------------------------
--- Upvalue any lua functions used here.
-
+local pairs = pairs
+local select = select
+local table_insert = table.insert
 
 -- WoW API
 -----------------------------------------------------------
--- Upvalue any WoW functions used here.
+local ChatTypeInfo = ChatTypeInfo
+local ClearOverrideBindings = ClearOverrideBindings
+local CreateFrame = CreateFrame
+local GetBindingKey = GetBindingKey
+local SetOverrideBindingClick = SetOverrideBindingClick
 
 
 -- Your default settings.
@@ -101,18 +106,161 @@ local db = (function(db) _G[Addon.."_DB"] = db; return db end)({
 
 })
 
+local ChatLabels = {
+	["SAY"] 					= CHAT_MSG_SAY,
+	["YELL"] 					= CHAT_MSG_YELL,
+	["WHISPER"] 				= CHAT_MSG_WHISPER_INFORM,
+	["PARTY"] 					= CHAT_MSG_PARTY,
+	["PARTY_LEADER"] 			= CHAT_MSG_PARTY_LEADER,
+	["RAID"] 					= CHAT_MSG_RAID,
+	["RAID_LEADER"] 			= CHAT_MSG_RAID_LEADER,
+	["RAID_WARNING"] 			= CHAT_MSG_RAID_WARNING,
+	["INSTANCE_CHAT"] 			= INSTANCE_CHAT,
+	["INSTANCE_CHAT_LEADER"] 	= INSTANCE_CHAT_LEADER,
+	["GUILD"] 					= CHAT_MSG_GUILD,
+	["OFFICER"] 				= CHAT_MSG_OFFICER,
+	["BN_WHISPER"] 				= CHAT_MSG_BN_WHISPER,
+	["INSTANCE_CHAT"] 			= CHAT_MSG_BATTLEGROUND,
+	["INSTANCE_CHAT_LEADER"] 	= CHAT_MSG_BATTLEGROUND_LEADER
+}
 
 -- Utility Functions
 -----------------------------------------------------------
--- Add utility functions like 
--- time formatting and similar here.
+-- Return a value rounded to the nearest integer.
+local math_round = function(value, precision)
+	if (precision) then
+		value = value * 10^precision
+		value = (value + .5) - (value + .5)%1
+		value = value / 10^precision
+		return value
+	else 
+		return (value + .5) - (value + .5)%1
+	end 
+end
+
+-- Convert a coordinate within a frame to a usable position
+local parse = function(parentWidth, parentHeight, x, y, bottomOffset, leftOffset, topOffset, rightOffset)
+	if (y < parentHeight * 1/3) then 
+		if (x < parentWidth * 1/3) then 
+			return "BOTTOMLEFT", leftOffset, bottomOffset
+		elseif (x > parentWidth * 2/3) then 
+			return "BOTTOMRIGHT", rightOffset, bottomOffset
+		else 
+			return "BOTTOM", x - parentWidth/2, bottomOffset
+		end 
+	elseif (y > parentHeight * 2/3) then 
+		if (x < parentWidth * 1/3) then 
+			return "TOPLEFT", leftOffset, topOffset
+		elseif x > parentWidth * 2/3 then 
+			return "TOPRIGHT", rightOffset, topOffset
+		else 
+			return "TOP", x - parentWidth/2, topOffset
+		end 
+	else 
+		if (x < parentWidth * 1/3) then 
+			return "LEFT", leftOffset, y - parentHeight/2
+		elseif (x > parentWidth * 2/3) then 
+			return "RIGHT", rightOffset, y - parentHeight/2
+		else 
+			return "CENTER", x - parentWidth/2, y - parentHeight/2
+		end 
+	end 
+end
+
+-- Input Box Template
+-----------------------------------------------------------
+local InputBox = {
+
+	-- Needed for position parsing. Can probably simplify a bit.
+	GetParsedPosition = function(self)
+
+		-- Retrieve UI coordinates
+		local uiScale = UIParent:GetEffectiveScale()
+		local uiWidth, uiHeight = UIParent:GetSize()
+		local uiBottom = UIParent:GetBottom()
+		local uiLeft = UIParent:GetLeft()
+		local uiTop = UIParent:GetTop()
+		local uiRight = UIParent:GetRight()
+
+		local worldWidth = math_round(WorldFrame:GetWidth())
+		local worldHeight = math_round(WorldFrame:GetHeight()) -- this is 768, always. why not just assume?
+
+		-- Turn UI coordinates into unscaled screen coordinates
+		uiWidth = uiWidth*uiScale
+		uiHeight = uiHeight*uiScale
+		uiBottom = uiBottom*uiScale
+		uiLeft = uiLeft*uiScale
+		uiTop = uiTop*uiScale - worldHeight -- use values relative to edges, not origin
+		uiRight = uiRight*uiScale - worldWidth -- use values relative to edges, not origin
+
+		-- Retrieve frame coordinates
+		local frameScale = self:GetEffectiveScale()
+		local x, y = self:GetCenter()
+		local bottom = self:GetBottom()
+		local left = self:GetLeft()
+		local top = self:GetTop()
+		local right = self:GetRight()
+
+		-- Turn frame coordinates into unscaled screen coordinates
+		x = x*frameScale
+		y = y*frameScale
+		bottom = bottom*frameScale
+		left = left*frameScale
+		top = top*frameScale - worldHeight -- use values relative to edges, not origin
+		right = right*frameScale - worldWidth -- use values relative to edges, not origin
+
+		-- Figure out the frame position relative to the UI master frame
+		left = left - uiLeft
+		bottom = bottom - uiBottom
+		right = right - uiRight
+		top = top - uiTop
+
+		-- Figure out the point within the given coordinate space
+		local point, offsetX, offsetY = parse(uiWidth, uiHeight, x, y, bottom, left, top, right)
+
+		-- Convert coordinates to the frame's scale. 
+		return point, offsetX/frameScale, offsetY/frameScale
+	end,
+
+	-- Update colors and label.
+	UpdateChatType = function(self)
+		local chatType = self:GetAttribute("chatType") or "SAY"
+		local info = ChatTypeInfo[chatType]
+		local r,g,b = info.r, info.g, info.b
+		self.Backdrop:SetBackdropColor(r*.1, g*.1, b*.1, .75)
+		self.Backdrop:SetBackdropBorderColor(r*.1, g*.1, b*.1, .75)
+		self.Border:SetBackdropBorderColor(r, g, b, .85)
+		self.Label:SetTextColor(r, g, b, 1)
+		self.Label:SetText(ChatLabels[chatType])
+		self:SetTextColor(r, g, b, 1)
+	end,
+
+	-- Fix font and raise the box on show.
+	OnPostShow = function(self) 
+		self:SetFont(self:GetFont(), 22, "THINOUTLINE")
+		self:UpdateChatType()
+		self:SetFocus()
+		self:Raise()
+		self:SetAlpha(1)
+	end
+
+}
 
 
 -- Callbacks
 -----------------------------------------------------------
--- Add functions called multiple times 
--- by your reactive addon code here.
-
+Private.AssignBindActions = function(self, ...)
+	ClearOverrideBindings(BigInputBoxToggleButton)
+	for i = 1,select("#", ...) do
+		local bindAction = select(i,...)
+		for keyNumber = 1, select("#", GetBindingKey(bindAction)) do 
+			local key = select(keyNumber, GetBindingKey(bindAction)) 
+			if (key and (key ~= "")) then
+				SetOverrideBindingClick(BigInputBoxToggleButton, true, key, "BigInputBoxToggleButton")
+			end
+		end
+	end
+end
 
 -- Addon Core
 -----------------------------------------------------------
@@ -121,13 +269,34 @@ local db = (function(db) _G[Addon.."_DB"] = db; return db end)({
 -- @input event <string> The name of the event that fired.
 -- @input ... <misc> Any payloads passed by the event handlers.
 Private.OnEvent = function(self, event, ...)
-end
+	if (event == "PLAYER_ENTERING_WORLD") then
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
--- Your chat command handler.
--- @input editBox <table/frame> The editbox the command was entered into. 
--- @input command <string> The name of the slash command type in.
--- @input ... <string(s)> Any additional arguments passed to your command, all as strings.
-Private.OnChatCommand = function(self, editBox, command, ...)
+		-- Embed a few extra metods in our inputbox.
+		for method,func in pairs(InputBox) do
+			BigInputBox.editBox[method] = func
+		end
+
+		-- Give it a nice blink speed, and post-hook showing.
+		BigInputBox.editBox:SetBlinkSpeed(.5)
+		BigInputBox.editBox:HookScript("OnShow", InputBox.OnPostShow)
+
+		-- Piggyback on the blizzard chat header updates 
+		-- to figure out what label and colors to use.
+		hooksecurefunc("ChatEdit_UpdateHeader", function(editBox) 
+			if (editBox == BigInputBox.editBox) then
+				BigInputBox.editBox:UpdateChatType()
+			end
+		end)
+
+		-- Borrow all the chat input opening keybinds.
+		self:AssignBindActions("OPENCHAT","OPENCHATSLASH","REPLY","REPLY2")
+
+	elseif (event == "UPDATE_BINDINGS") then 
+		-- This happens when players change bindings, 
+		-- or if the saved ones for some reason is loaded late. 
+		self:AssignBindActions("OPENCHAT","OPENCHATSLASH","REPLY","REPLY2")
+	end
 end
 
 -- Initialization.
@@ -135,13 +304,15 @@ end
 Private.OnInit = function(self)
 	-- Do any parsing of saved settings here.
 	-- This is also a good place to create your frames and objects.
+	-- Turns out we have nothing to do here. 
 end
 
 -- Enabling.
 -- This fires when most of the user interface has been loaded
 -- and most data is available to the user.
 Private.OnEnable = function(self)
-	-- Register your events here.
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("UPDATE_BINDINGS")
 end
 
 
@@ -167,6 +338,25 @@ end
 	Private.IsRetailShadowlands = tonumber(MAJOR) == 9
 	Private.CurrentClientBuild = currentClientBuild -- Expose the build number too
 
+	-- Set a relative subpath to look for media files in.
+	local Path
+	Private.SetMediaPath = function(self, path)
+		Path = path
+	end
+
+	-- Simple API calls to retrieve a media file.
+	-- Will honor the relativ subpath set above, if defined, 
+	-- and will default to the addon folder itself if not.
+	-- Note that we cannot check for file or folder existence 
+	-- from within the WoW API, so you must make sure this is correct.
+	Private.GetMedia = function(self, name, type) 
+		if (Path) then
+			return ([[Interface\AddOns\%s\%s\%s.%s]]):format(Addon, Path, name, type or "tga") 
+		else
+			return ([[Interface\AddOns\%s\%s.%s]]):format(Addon, name, type or "tga") 
+		end
+	end
+	
 	-- Parse chat input arguments 
 	local parse = function(msg)
 		msg = string.gsub(msg, "^%s+", "") -- Remove spaces at the start.

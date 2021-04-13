@@ -1,0 +1,218 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="DIALOG" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
+		<Size x="420" y="48"/>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="330"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				local db = IsAddOnLoaded("MapShrinker") and BigInputBox_DB;
+				if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
+					self:ClearAllPoints();
+					self:SetPoint(db.point, db.offsetX, db.offsetY);
+				else
+					self:RegisterEvent("ADDON_LOADED");
+				end
+			</OnLoad>
+			<OnEvent>
+				if (event == "ADDON_LOADED") then
+					local addon = ...;
+					if (addon == "MapShrinker") then
+						local db = BigInputBox_DB;
+						if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
+							self:ClearAllPoints();
+							self:SetPoint(BigInputBox_DB.point, BigInputBox_DB.offsetX, BigInputBox_DB.offsetY);
+						end
+					end
+				end
+			</OnEvent>
+		</Scripts>
+		<Frames>
+			<Frame parentKey="uiHider" hidden="true" />
+			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="DIALOG" frameLevel="6" autoFocus="true" ignoreArrows="false" toplevel="false" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="6" y="-6"/>
+					<Anchor point="BOTTOMRIGHT" x="-6" y="6"/>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="DIALOG" frameLevel="5">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="-24" y="24"/>
+							<Anchor point="BOTTOMRIGHT" x="24" y="-24"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdrop({ 
+									bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
+									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-backdrop-small.tag]], 
+									edgeSize = 24,
+									insets = { left = 24, right = 24, top = 24, bottom = 24 }
+								});
+								self:SetBackdropColor(0,0,0,.75);
+								self:SetBackdropBorderColor(0,0,0,.75);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentBorder" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Border" frameStrata="DIALOG" frameLevel="6">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="-23" y="23"/>
+							<Anchor point="BOTTOMRIGHT" x="23" y="-23"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdrop({ 
+									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-border-small.tag]], 
+									edgeSize = 24
+								});
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Layers>
+					<Layer level="OVERLAY" textureSubLevel="6">
+						<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE" parentKey="Label">
+							<Size x="0" y="0"/>
+							<Anchors>
+								<Anchor point="BOTTOM" relativeKey="$parent" relativePoint="TOP" x="0" y="10"/>
+							</Anchors>
+							<Shadow>
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+								<Color a="0" r="0" g="0" b="0"/>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.chatFrame = self:GetParent();
+						self.chatLanguage = GetDefaultLanguage();
+						self:SetAttribute("chatType", "SAY");
+						self:SetAttribute("stickyType", "SAY");
+						self:RegisterEvent("UPDATE_CHAT_COLOR");
+
+						-- Are these even needed? 
+						self.addSpaceToAutoComplete = true;
+						self.addHighlightedText = true;
+
+						-- Fix the label font.
+						self.Label:SetFont(self.Label:GetFont(), 18, "THINOUTLINE");
+
+						-- Disable some Blizzard layers we don't need.
+						self:DisableDrawLayer("BACKGROUND");
+						self:DisableDrawLayer("BORDER");
+						self:SetTextInsets(0,0,0,0);
+						self.SetTextInsets = function() end
+
+						for _,item in ipairs({ "focusLeft", "focusRight", "focusMid" }) do
+							if (self[item]) then 
+								self[item]:SetAlpha(0); 
+							end
+						end
+
+						for _,item in ipairs({ "header", "headerSuffix", "NewcomerHint" }) do
+							if (self[item]) then 
+								self[item]:SetParent(self:GetParent().uiHider);
+							end
+						end
+					</OnLoad>
+					<OnEditFocusGained>
+						self:Raise(); 
+						self:SetAlpha(1); 
+					</OnEditFocusGained>
+					<OnEditFocusLost>
+						self:GetParent():Hide();
+					</OnEditFocusLost>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnUpdate>
+					</OnUpdate>
+					<OnHide>
+						self:SetText("");
+						ACTIVE_CHAT_EDIT_BOX = nil -- taint?
+						local alpha = 0;
+						local frame = SELECTED_CHAT_FRAME;
+						if (frame) then
+							for index,value in pairs(CHAT_FRAME_TEXTURES) do
+								if (not string.find(value, "Tab")) then
+									local object = _G[frame:GetName()..value]
+									if (object:IsShown()) then
+										UIFrameFadeRemoveFrame(object);
+										object:SetAlpha(alpha);
+									end
+								end
+							end
+						end
+					</OnHide>
+				</Scripts>
+				<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE">
+					<Shadow>
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+						<Color a="0" r="0" g="0" b="0"/>
+					</Shadow>
+				</FontString>
+			</EditBox>
+			<Frame name="$parentMoveButton" parentKey="MoveButton">
+				<Scripts>
+					<OnLoad>
+						self:EnableMouse(true);
+						self:RegisterForDrag("LeftButton");
+						self:SetAllPoints(self:GetParent().editBox.Label);
+					</OnLoad>
+					<OnMouseUp>
+						if (IsShiftKeyDown()) then
+							self:GetParent():ClearAllPoints();
+							self:GetParent():SetPoint("BOTTOM", 0, 330);
+
+							local point, offsetX, offsetY = self:GetParent().editBox:GetParsedPosition();
+							BigInputBox_DB.point = point;
+							BigInputBox_DB.offsetX = offsetX;
+							BigInputBox_DB.offsetY = offsetY;
+						end
+					</OnMouseUp>
+					<OnDragStart>
+						self:GetParent():SetMovable(true);
+						self:GetParent():SetUserPlaced(true);
+						self:GetParent():StartMoving();
+					</OnDragStart>
+					<OnDragStop>
+						self:GetParent():StopMovingOrSizing();
+
+						-- Save the position, call lua callbacks to store and calculate.
+						local point, offsetX, offsetY = self:GetParent().editBox:GetParsedPosition();
+						BigInputBox_DB.point = point;
+						BigInputBox_DB.offsetX = offsetX;
+						BigInputBox_DB.offsetY = offsetY;
+
+						self:GetParent():SetUserPlaced(false);
+						self:GetParent():SetMovable(false);
+					</OnDragStop>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+
+	<Button name="BigInputBoxToggleButton" inherits="SecureActionButtonTemplate" parent="UIParent">
+		<Scripts>
+			<OnClick>
+				local frame = BigInputBox;
+				if (frame.editBox:IsVisible()) then
+					frame:Hide();
+					frame.editBox:Hide();
+					frame.editBox:ClearFocus();
+				else
+					frame:Show();
+					frame.editBox:Show();
+					frame.editBox:SetFocus();
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
+
+</Ui>
