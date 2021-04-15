@@ -37,6 +37,8 @@
 					<Anchor point="BOTTOMRIGHT" x="-6" y="6"/>
 				</Anchors>
 				<Frames>
+					<!-- Add an unused backdrop frame to avoid ElvUI and the likes putting double borders on our box. -->
+					<Frame mixin="BigInputBoxBackdropTemplateMixin" parentKey="backdrop" hidden="true" />
 					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="DIALOG" frameLevel="5">
 						<Anchors>
 							<Anchor point="TOPLEFT" x="-24" y="24"/>
@@ -113,7 +115,7 @@
 							end
 						end
 
-						for _,item in ipairs({ "header", "headerSuffix", "NewcomerHint" }) do
+						for _,item in ipairs({ "backdrop", "header", "headerSuffix", "NewcomerHint" }) do
 							if (self[item]) then 
 								self[item]:SetParent(self:GetParent().uiHider);
 							end

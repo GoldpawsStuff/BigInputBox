@@ -83,6 +83,9 @@ end)({
 -----------------------------------------------------------
 local pairs = pairs
 local select = select
+local string_lower = string.lower
+local string_gsub = string.gsub
+local string_upper = string.upper
 local table_insert = table.insert
 
 -- WoW API
@@ -154,6 +157,10 @@ local parse = function(parentWidth, parentHeight, x, y, bottomOffset, leftOffset
 	end 
 end
 
+local capitalize = function(first, rest)
+	return string_upper(first)..string_lower(rest)
+end
+
 -- Input Box Template
 -----------------------------------------------------------
 local InputBox = {
@@ -218,7 +225,17 @@ local InputBox = {
 		self.Backdrop:SetBackdropBorderColor(r*.1, g*.1, b*.1, .75)
 		self.Border:SetBackdropBorderColor(r, g, b, .85)
 		self.Label:SetTextColor(r, g, b, 1)
-		self.Label:SetText(ChatLabels[chatType])
+
+		local label
+		if (chatType == "WHISPER") or (chatType == "BN_WHISPER") then
+			local target = self:GetAttribute("tellTarget")
+			if (target) then
+				target = string_gsub(target, "(%a)([%w_']*)", capitalize)
+				label = "|cffad2424@|r"..target
+			end
+		end
+
+		self.Label:SetText(label or ChatLabels[chatType])
 		self:SetTextColor(r, g, b, 1)
 	end,
 
