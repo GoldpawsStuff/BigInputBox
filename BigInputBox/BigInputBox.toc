@@ -5,7 +5,7 @@
 ## Title: BigInputBox
 ## Notes: Big, movable chat input box.|nCode by Lars Norberg.|n|n|cff4488ffPayPal|r|cffffffff:|r |n|cffffffffwww.paypal.me/GoldpawsStuff|r|n|n|cff4488ffPatreon|r|cffffffff:|r |n|cffffffffwww.patreon.com/GoldpawsStuff|r
 ## Author: Lars Norberg
-## Version: 1.0-Release
+## Version: @project-version@
 
 ## X-Category: Interface Enhancements
 ## X-Discord: https://discord.gg/MUSfWXd
