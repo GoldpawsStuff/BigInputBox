@@ -48,7 +48,7 @@
 							<OnLoad>
 								self:SetBackdrop({ 
 									bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-backdrop-small.tag]], 
+									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-backdrop-small.tga]], 
 									edgeSize = 24,
 									insets = { left = 24, right = 24, top = 24, bottom = 24 }
 								});
@@ -65,7 +65,7 @@
 						<Scripts>
 							<OnLoad>
 								self:SetBackdrop({ 
-									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-border-small.tag]], 
+									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-border-small.tga]], 
 									edgeSize = 24
 								});
 							</OnLoad>
