@@ -293,13 +293,25 @@ Private.OnEvent = function(self, event, ...)
 		end)
 
 		-- Borrow all the chat input opening keybinds.
-		self:AssignBindActions("OPENCHAT","OPENCHATSLASH","REPLY","REPLY2")
+		self:AssignBindActions(unpack(self.BindActionsToGrab))
 
 	elseif (event == "UPDATE_BINDINGS") then 
 		-- This happens when players change bindings, 
 		-- or if the saved ones for some reason is loaded late. 
-		self:AssignBindActions("OPENCHAT","OPENCHATSLASH","REPLY","REPLY2")
+		self:AssignBindActions(unpack(self.BindActionsToGrab))
 	end
+end
+
+-- Initialization.
+-- This fires when the addon and its settings are loaded.
+Private.OnInit = function(self)
+	-- What keybinds we want to reassign to our button.
+	self.BindActionsToGrab = { 
+		"OPENCHAT", -- The regular button to open chat.
+		--"OPENCHATSLASH", -- We can't do this from an addon without taint, so skipping it for now.
+		"REPLY", -- Reply to whomever whispered you last. 
+		"REPLY2" -- Re-whisper the same person you whispered last.
+	}
 end
 
 -- Enabling.
