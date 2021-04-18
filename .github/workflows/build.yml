@@ -1,13 +1,14 @@
 name: Packager
 
 on:
-  push:
-    branches:
-      - master
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+-[a-zA-Z]'
-    paths-ignore:
-      - '.github/**'
+  create:
+#  push:
+#    branches:
+#      - master
+#    tags:
+#      - '[0-9]+.[0-9]+.[0-9]+-[a-zA-Z]'
+#    paths-ignore:
+#      - '.github/**'
 
 env:
   CF_API_KEY: ${{ secrets.CF_API_KEY }}
