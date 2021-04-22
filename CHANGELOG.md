@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.0.4-Release] 2021-04-18
-- Cryptic message just to add a change. 
+## [1.0.5-Release] 2021-04-22
+- Bump toc version for WoW Classic.
 
+### Changed
+- It is now possible to shift-click items to link them in the open input box.
+
+## [1.0.4-Release] 2021-04-18
 ### Changed
 - We no longer grab the keybind to open to a chat window with a slash `/` already entered. Since we cannot actually put that slash into the input box from our non-Blizzard addon without breaking the ability to cast spells and use items from our input box, we found it better to just NOT grab that keybind since we can't reproduce the functionaly properly.
 

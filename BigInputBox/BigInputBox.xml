@@ -100,6 +100,25 @@
 						self.addSpaceToAutoComplete = true;
 						self.addHighlightedText = true;
 
+						local ChatEditAutoComplete = function(editBox, fullText, nameInfo, ambiguatedName)
+							if hash_ChatTypeInfoList[string.upper(editBox.command)] == "SMART_WHISPER" then
+								if nameInfo.bnetID ~= nil and nameInfo.bnetID ~= 0 then
+									editBox:SetAttribute("tellTarget", nameInfo.name);
+									editBox:SetAttribute("chatType", "BN_WHISPER");
+								else
+									editBox:SetAttribute("tellTarget", ambiguatedName);
+									editBox:SetAttribute("chatType", "WHISPER");
+								end
+								editBox:SetText("");
+								ChatEdit_UpdateHeader(editBox);
+								return true;
+							end
+
+							return false;
+						end
+
+						AutoCompleteEditBox_SetCustomAutoCompleteFunction(self, ChatEditAutoComplete);
+
 						-- Fix the label font.
 						self.Label:SetFont(self.Label:GetFont(), 18, "THINOUTLINE");
 
@@ -124,6 +143,9 @@
 					<OnEditFocusGained>
 						self:Raise(); 
 						self:SetAlpha(1); 
+						-- Setting this is needed
+						-- for items to be linked to the chat.
+						ACTIVE_CHAT_EDIT_BOX = self; -- taint?
 					</OnEditFocusGained>
 					<OnEditFocusLost>
 						self:GetParent():Hide();
@@ -135,6 +157,8 @@
 					</OnUpdate>
 					<OnHide>
 						self:SetText("");
+						-- Make sure the other chat boxes don't
+						-- get focus when ours is hidden.
 						ACTIVE_CHAT_EDIT_BOX = nil -- taint?
 						local alpha = 0;
 						local frame = SELECTED_CHAT_FRAME;
