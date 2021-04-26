@@ -1,6 +1,7 @@
+local Addon = ...
+local MixinGlobal = Addon.."BackdropTemplateMixin"
 
--- Thank you Narcissus!
-BigInputBoxBackdropTemplateMixin = {}
+_G[MixinGlobal] = {}
 if (BackdropTemplateMixin) then
-    BigInputBoxBackdropTemplateMixin = CreateFromMixins(BackdropTemplateMixin)
+    _G[MixinGlobal] = CreateFromMixins(BackdropTemplateMixin)
 end
