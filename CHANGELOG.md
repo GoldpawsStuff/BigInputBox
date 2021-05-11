@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.6-Release] 2021-05-11
+- Bump toc version for WoW BC.
+
 ## [1.0.5-Release] 2021-04-22
 - Bump toc version for WoW Classic.
 
