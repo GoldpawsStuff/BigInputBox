@@ -8,7 +8,7 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				local db = IsAddOnLoaded("MapShrinker") and BigInputBox_DB;
+				local db = IsAddOnLoaded("BigInputBox") and BigInputBox_DB;
 				if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
 					self:ClearAllPoints();
 					self:SetPoint(db.point, db.offsetX, db.offsetY);
@@ -19,7 +19,7 @@
 			<OnEvent>
 				if (event == "ADDON_LOADED") then
 					local addon = ...;
-					if (addon == "MapShrinker") then
+					if (addon == "BigInputBox") then
 						local db = BigInputBox_DB;
 						if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
 							self:ClearAllPoints();
@@ -90,7 +90,11 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
+						-- Various flags and methods for compatibility
 						self.chatFrame = self:GetParent();
+						self.chatFrame.AddMessage = function(frame, ...) 
+							DEFAULT_CHAT_FRAME:AddMessage(...)
+						end;
 						self.chatLanguage = GetDefaultLanguage();
 						self:SetAttribute("chatType", "SAY");
 						self:SetAttribute("stickyType", "SAY");
