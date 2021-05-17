@@ -1,5 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
 
 	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="DIALOG" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
 		<Size x="420" y="48"/>
