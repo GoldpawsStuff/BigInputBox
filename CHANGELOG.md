@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.8-Release] 2021-05-17
+- Extra push needed because the bigwigs packager changed its API from using "bc" to calling it "bcc". 
+
 ## [1.0.7-Release] 2021-05-12
 ### Fixed
 - Typing unknown chat commands should no longer cause a bug.
