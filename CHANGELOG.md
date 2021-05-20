@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.9-Release] 2021-05-20
+### Changed
+- The number and name of numbered channels should now be visible above the input box.
+
 ## [1.0.8-Release] 2021-05-17
 - Extra push needed because the bigwigs packager changed its API from using "bc" to calling it "bcc". 
 

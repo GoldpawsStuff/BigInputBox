@@ -233,6 +233,14 @@ local InputBox = {
 				target = string_gsub(target, "(%a)([%w_']*)", capitalize)
 				label = "|cffad2424@|r"..target
 			end
+		elseif (chatType == "CHANNEL") then
+			local channelTarget = self:GetAttribute("channelTarget")
+			local localID, channelName, instanceID, isCommunitiesChannel = GetChannelName(channelTarget)
+			if (channelName) and (channelName ~= "") then
+				label = localID..":"..channelName
+			else
+				label = tostring(localID)
+			end
 		end
 
 		self.Label:SetText(label or ChatLabels[chatType])
