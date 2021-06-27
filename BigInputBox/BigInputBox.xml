@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="DIALOG" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
+	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="FULLSCREEN" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
 		<Size x="420" y="48"/>
 		<Anchors>
 			<Anchor point="BOTTOM" x="0" y="330"/>
@@ -30,7 +30,7 @@
 		</Scripts>
 		<Frames>
 			<Frame parentKey="uiHider" hidden="true" />
-			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="DIALOG" frameLevel="6" autoFocus="true" ignoreArrows="false" toplevel="false" hidden="true">
+			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" toplevel="false" hidden="true">
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6"/>
 					<Anchor point="BOTTOMRIGHT" x="-6" y="6"/>
@@ -38,7 +38,7 @@
 				<Frames>
 					<!-- Add an unused backdrop frame to avoid ElvUI and the likes putting double borders on our box. -->
 					<Frame mixin="BigInputBoxBackdropTemplateMixin" parentKey="backdrop" hidden="true" />
-					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="DIALOG" frameLevel="5">
+					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="FULLSCREEN" frameLevel="5">
 						<Anchors>
 							<Anchor point="TOPLEFT" x="-24" y="24"/>
 							<Anchor point="BOTTOMRIGHT" x="24" y="-24"/>
@@ -56,7 +56,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentBorder" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Border" frameStrata="DIALOG" frameLevel="6">
+					<Frame name="$parentBorder" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Border" frameStrata="FULLSCREEN" frameLevel="6">
 						<Anchors>
 							<Anchor point="TOPLEFT" x="-23" y="23"/>
 							<Anchor point="BOTTOMRIGHT" x="23" y="-23"/>
