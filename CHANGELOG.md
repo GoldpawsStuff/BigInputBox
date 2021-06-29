@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.11-Release] 2021-06-29
+- Bump toc version for 9.1.0.
+
 ## [1.0.10-Release] 2021-06-27
 ### Changed
 - Moved the box into the FULLSCREEN strata, up from DIALOG.
