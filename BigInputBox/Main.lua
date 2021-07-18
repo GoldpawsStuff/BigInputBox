@@ -260,14 +260,14 @@ local InputBox = {
 
 -- Callbacks
 -----------------------------------------------------------
-Private.AssignBindActions = function(self, ...)
-	ClearOverrideBindings(BigInputBoxToggleButton)
+Private.AssignBindActions = function(self, overrideButton, ...)
+	ClearOverrideBindings(overrideButton)
 	for i = 1,select("#", ...) do
 		local bindAction = select(i,...)
 		for keyNumber = 1, select("#", GetBindingKey(bindAction)) do 
 			local key = select(keyNumber, GetBindingKey(bindAction)) 
 			if (key and (key ~= "")) then
-				SetOverrideBindingClick(BigInputBoxToggleButton, true, key, "BigInputBoxToggleButton")
+				SetOverrideBindingClick(overrideButton, true, key, overrideButton:GetName())
 			end
 		end
 	end
@@ -301,25 +301,26 @@ Private.OnEvent = function(self, event, ...)
 		end)
 
 		-- Borrow all the chat input opening keybinds.
-		self:AssignBindActions(unpack(self.BindActionsToGrab))
+		--	"OPENCHAT"			-- The regular button to open chat.
+		--	"REPLY"			 	-- Reply to whomever whispered you last. 
+		--	"REPLY2"			-- Re-whisper the same person you whispered last.
+		--	"OPENCHATSLASH"		-- We can't do this from an addon without taint, so skipping it for now.
+		self:AssignBindActions(BigInputBoxToggleButton, "OPENCHAT")
+		self:AssignBindActions(BigInputBoxReplyButton, "REPLY")
+		self:AssignBindActions(BigInputBoxRewhisperButton, "REPLY2")
 
 	elseif (event == "UPDATE_BINDINGS") then 
 		-- This happens when players change bindings, 
 		-- or if the saved ones for some reason is loaded late. 
-		self:AssignBindActions(unpack(self.BindActionsToGrab))
+		self:AssignBindActions(BigInputBoxToggleButton, "OPENCHAT")
+		self:AssignBindActions(BigInputBoxReplyButton, "REPLY")
+		self:AssignBindActions(BigInputBoxRewhisperButton, "REPLY2")
 	end
 end
 
 -- Initialization.
 -- This fires when the addon and its settings are loaded.
 Private.OnInit = function(self)
-	-- What keybinds we want to reassign to our button.
-	self.BindActionsToGrab = { 
-		"OPENCHAT", -- The regular button to open chat.
-		--"OPENCHATSLASH", -- We can't do this from an addon without taint, so skipping it for now.
-		"REPLY", -- Reply to whomever whispered you last. 
-		"REPLY2" -- Re-whisper the same person you whispered last.
-	}
 end
 
 -- Enabling.

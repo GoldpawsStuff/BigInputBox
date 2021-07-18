@@ -176,6 +176,9 @@
 								end
 							end
 						end
+						-- reset chat type to avoid being stuck at whisper targets.
+						ChatEdit_ResetChatTypeToSticky(self);
+						ChatEdit_ResetChatType(self);
 					</OnHide>
 				</Scripts>
 				<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE">
@@ -240,6 +243,38 @@
 					frame.editBox:Show();
 					frame.editBox:SetFocus();
 				end
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="BigInputBoxReplyButton" inherits="SecureActionButtonTemplate" parent="UIParent">
+		<Scripts>
+			<OnClick>
+				local frame = BigInputBox;
+				local lastTell, lastTellType = ChatEdit_GetLastTellTarget();
+				if (lastTell) then
+					frame.editBox:SetAttribute("chatType", lastTellType);
+					frame.editBox:SetAttribute("tellTarget", lastTell);
+				end
+				frame:Show();
+				frame.editBox:Show();
+				frame.editBox:SetFocus();
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="BigInputBoxRewhisperButton" inherits="SecureActionButtonTemplate" parent="UIParent">
+		<Scripts>
+			<OnClick>
+				local frame = BigInputBox;
+				local lastTold, lastToldType = ChatEdit_GetLastToldTarget();
+				if (lastTold) then
+					frame.editBox:SetAttribute("chatType", lastToldType);
+					frame.editBox:SetAttribute("tellTarget", lastTold);
+				end
+				frame:Show();
+				frame.editBox:Show();
+				frame.editBox:SetFocus();
 			</OnClick>
 		</Scripts>
 	</Button>

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.12-Release] 2021-07-18
+### Changed
+- Reply keybind should now set the editbox to the person you last received a whisper from.
+- Rewhisper keybind should now set the editbox to the person you last sent a whisper to.
+
 ## [1.0.11-Release] 2021-06-29
 - Bump toc version for 9.1.0.
 
