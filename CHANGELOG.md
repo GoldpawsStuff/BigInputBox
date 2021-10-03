@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.14-Release] 2021-09-03
+### Changes
+- The editbox will now resize its width slightly based on how much you type into it.
+- The contents of the editbox will no longer reset when it is closed by losing focus, like when you click somewhere else on the screen. It now requires you to either hit Esc to cancel the whole thing, or send the message with Enter. Then and only then will the box be cleared, just like the standard Blizzard chat boxes.
+
 ## [1.0.13-Release] 2021-09-01
 - Bump TOC for BCC 2.5.2.
 

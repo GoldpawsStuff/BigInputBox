@@ -279,12 +279,12 @@ local InputBox = {
 		-- A major problem is that multiline boxes don't support history.
 		local fullWidth = self.faker:GetUnboundedStringWidth()
 		if (fullWidth > 300) then -- no idea why it wraps at this, look into it!
-			if (fullWidth < 800) then
+			if (fullWidth < 660) then
 				local width = eW + fullWidth - 300
 				self:SetSize(width, eH)
 				BigInputBox:SetSize(w + (width - eW), h)
 			else
-				local width = eW + 800 - 300
+				local width = eW + 660 - 300
 				self:SetSize(width, eH)
 				BigInputBox:SetSize(w + (width - eW), h)
 			end
