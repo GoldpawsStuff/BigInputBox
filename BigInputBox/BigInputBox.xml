@@ -31,17 +31,17 @@
 		<Frames>
 			<Frame parentKey="uiHider" hidden="true" />
 			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" toplevel="false" hidden="true">
+				<Size x="408" y="22"/>
 				<Anchors>
-					<Anchor point="TOPLEFT" x="6" y="-6"/>
-					<Anchor point="BOTTOMRIGHT" x="-6" y="6"/>
+					<Anchor point="CENTER"/>
 				</Anchors>
 				<Frames>
 					<!-- Add an unused backdrop frame to avoid ElvUI and the likes putting double borders on our box. -->
 					<Frame mixin="BigInputBoxBackdropTemplateMixin" parentKey="backdrop" hidden="true" />
 					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="FULLSCREEN" frameLevel="5">
 						<Anchors>
-							<Anchor point="TOPLEFT" x="-24" y="24"/>
-							<Anchor point="BOTTOMRIGHT" x="24" y="-24"/>
+							<Anchor point="TOPLEFT" x="-24" y="30"/>
+							<Anchor point="BOTTOMRIGHT" x="24" y="-30"/>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
@@ -58,8 +58,8 @@
 					</Frame>
 					<Frame name="$parentBorder" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Border" frameStrata="FULLSCREEN" frameLevel="6">
 						<Anchors>
-							<Anchor point="TOPLEFT" x="-23" y="23"/>
-							<Anchor point="BOTTOMRIGHT" x="23" y="-23"/>
+							<Anchor point="TOPLEFT" x="-23" y="29"/>
+							<Anchor point="BOTTOMRIGHT" x="23" y="-29"/>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
@@ -76,7 +76,7 @@
 						<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE" parentKey="Label">
 							<Size x="0" y="0"/>
 							<Anchors>
-								<Anchor point="BOTTOM" relativeKey="$parent" relativePoint="TOP" x="0" y="10"/>
+								<Anchor point="BOTTOM" relativeKey="$parent" relativePoint="TOP" x="0" y="16"/>
 							</Anchors>
 							<Shadow>
 								<Offset>
@@ -98,8 +98,6 @@
 						self:SetAttribute("chatType", "SAY");
 						self:SetAttribute("stickyType", "SAY");
 						self:RegisterEvent("UPDATE_CHAT_COLOR");
-
-						-- Are these even needed? 
 						self.addSpaceToAutoComplete = true;
 						self.addHighlightedText = true;
 
@@ -116,11 +114,15 @@
 								ChatEdit_UpdateHeader(editBox);
 								return true;
 							end
-
 							return false;
 						end
-
 						AutoCompleteEditBox_SetCustomAutoCompleteFunction(self, ChatEditAutoComplete);
+
+						self:HookScript("OnEnterPressed", function(self) 
+							self.enterPressed = true;
+							self:ClearFocus();
+							self:GetParent():Hide();
+						end)
 
 						-- Fix the label font.
 						self.Label:SetFont(self.Label:GetFont(), 18, "THINOUTLINE");
@@ -151,24 +153,35 @@
 						ACTIVE_CHAT_EDIT_BOX = self; -- taint?
 					</OnEditFocusGained>
 					<OnEditFocusLost>
+						if (not self.escapePressed) then
+							self.lostFocus = true;
+						end
 						self:GetParent():Hide();
 					</OnEditFocusLost>
 					<OnEscapePressed>
-						self:ClearFocus();
+						self.escapePressed = true; 
+						self:GetParent():Hide();
 					</OnEscapePressed>
 					<OnUpdate>
 					</OnUpdate>
 					<OnHide>
-						self:SetText("");
+						-- The order of events: Esc pressed > Focus lost > Hiding
+						local reset = (self.escapePressed or self.enterPressed) and (not self.lostFocus)
+						if (reset) then
+							self:SetText("");
+						end
+						-- Clear these before the next time.
+						self.escapePressed = nil;
+						self.enterPressed = nil;
+						self.lostFocus = nil;
 						-- Make sure the other chat boxes don't
 						-- get focus when ours is hidden.
 						ACTIVE_CHAT_EDIT_BOX = nil -- taint?
 						local alpha = 0;
-						local frame = SELECTED_CHAT_FRAME;
-						if (frame) then
-							for index,value in pairs(CHAT_FRAME_TEXTURES) do
-								if (not string.find(value, "Tab")) then
-									local object = _G[frame:GetName()..value]
+						if (SELECTED_CHAT_FRAME) then
+							for index,tex in pairs(CHAT_FRAME_TEXTURES) do
+								if (not string.find(tex, "Tab")) then
+									local object = _G[SELECTED_CHAT_FRAME:GetName()..tex]
 									if (object:IsShown()) then
 										UIFrameFadeRemoveFrame(object);
 										object:SetAlpha(alpha);
@@ -177,8 +190,10 @@
 							end
 						end
 						-- reset chat type to avoid being stuck at whisper targets.
-						ChatEdit_ResetChatTypeToSticky(self);
-						ChatEdit_ResetChatType(self);
+						if (reset) then
+							ChatEdit_ResetChatTypeToSticky(self);
+							ChatEdit_ResetChatType(self);
+						end
 					</OnHide>
 				</Scripts>
 				<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE">

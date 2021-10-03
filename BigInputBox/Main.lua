@@ -283,6 +283,50 @@ Private.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_ENTERING_WORLD") then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
+
+		local ignore = { "header", "headerSuffix", "Label", "NewcomerHint", "prompt" }
+		for i = 1,BigInputBox.editBox:GetNumRegions() do
+			local region = select(i, BigInputBox.editBox:GetRegions())
+			if (region:IsObjectType("FontString")) then
+				local skip
+				for _,j in pairs(ignore) do
+					if (BigInputBox.editBox[j] == region) then
+						skip = true
+					end
+				end
+				if (not skip) then
+					BigInputBox.editBox.fontString = region
+				end
+			end
+		end
+
+		BigInputBox.editBox:SetMultiLine(true)
+
+		local input = BigInputBox.editBox.fontString
+		input:SetJustifyV("MIDDLE")
+
+		local faker = BigInputBox:CreateFontString()
+		faker:SetFontObject(input:GetFontObject())
+		faker:SetWidth(408)
+
+		BigInputBox.editBox:HookScript("OnTextChanged", function(self) 
+			local msg = self:GetText()
+			faker:SetText(msg)
+			local fullWidth = faker:GetUnboundedStringWidth()
+			if (fullWidth > 300) then
+				if (fullWidth < 600) then
+					local width = 408 + fullWidth - 300
+					self:SetSize(width, 22)
+					BigInputBox:SetSize(width + 12, 48)
+				else
+					faker:SetWidth(408)
+					local numLines = faker:GetNumLines()
+					BigInputBox:SetSize(420, 26 + 22*numLines)
+					self:SetSize(408, 22*numLines)
+				end
+			end
+		end)
+
 		-- Embed a few extra metods in our inputbox.
 		for method,func in pairs(InputBox) do
 			BigInputBox.editBox[method] = func
