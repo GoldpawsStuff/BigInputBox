@@ -249,11 +249,47 @@ local InputBox = {
 
 	-- Fix font and raise the box on show.
 	OnPostShow = function(self) 
-		self:SetFont(self:GetFont(), 22, "THINOUTLINE")
+		self:SetFont(self:GetFont(), math_round(BigInputBox.editBox.defaultHeight), "THINOUTLINE")
 		self:UpdateChatType()
 		self:SetFocus()
 		self:Raise()
 		self:SetAlpha(1)
+	end, 
+	
+	OnPostTextChanged = function(self)
+		local msg = self:GetText()
+		local w = math_round(BigInputBox.defaultWidth)
+		local h = math_round(BigInputBox.defaultHeight)
+		local eW = math_round(BigInputBox.editBox.defaultWidth)
+		local eH = math_round(BigInputBox.editBox.defaultHeight)
+
+		-- The text in the input box will auto-wrap 
+		-- no matter what settings we give the fontstring, 
+		-- so we need a copy of it to get correct measurements.
+		if (not self.faker) then
+			self.faker = BigInputBox:CreateFontString()
+			self.faker:SetFontObject(NumberFont_Outline_Large)
+			self.faker:SetFont(self.faker:GetFont(), eH, "THINOUTLINE")
+			self.faker:SetWidth(eW)
+		end
+		self.faker:SetText(msg)
+
+		local fullWidth = self.faker:GetUnboundedStringWidth()
+		if (fullWidth > 300) then -- no idea why it wraps at this, look into it!
+			if (fullWidth < 600) then
+				local width = eW + fullWidth - 300
+				self:SetSize(width, eH)
+				BigInputBox:SetSize(w + (width - eW), h)
+			else
+				self.faker:SetWidth(eW)
+				local numLines = self.faker:GetNumLines()
+				self:SetSize(eW, eH*numLines)
+				BigInputBox:SetSize(w, (h-eH) + eH*numLines)
+			end
+		else
+			self:SetSize(eW, eH)
+			BigInputBox:SetSize(w, h)
+		end
 	end
 
 }
@@ -281,51 +317,15 @@ end
 -- @input ... <misc> Any payloads passed by the event handlers.
 Private.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_ENTERING_WORLD") then
+
+		-- Only ever call this once. 
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
-
-		local ignore = { "header", "headerSuffix", "Label", "NewcomerHint", "prompt" }
-		for i = 1,BigInputBox.editBox:GetNumRegions() do
-			local region = select(i, BigInputBox.editBox:GetRegions())
-			if (region:IsObjectType("FontString")) then
-				local skip
-				for _,j in pairs(ignore) do
-					if (BigInputBox.editBox[j] == region) then
-						skip = true
-					end
-				end
-				if (not skip) then
-					BigInputBox.editBox.fontString = region
-				end
-			end
-		end
-
-		BigInputBox.editBox:SetMultiLine(true)
-
-		local input = BigInputBox.editBox.fontString
-		input:SetJustifyV("MIDDLE")
-
-		local faker = BigInputBox:CreateFontString()
-		faker:SetFontObject(input:GetFontObject())
-		faker:SetWidth(408)
-
-		BigInputBox.editBox:HookScript("OnTextChanged", function(self) 
-			local msg = self:GetText()
-			faker:SetText(msg)
-			local fullWidth = faker:GetUnboundedStringWidth()
-			if (fullWidth > 300) then
-				if (fullWidth < 600) then
-					local width = 408 + fullWidth - 300
-					self:SetSize(width, 22)
-					BigInputBox:SetSize(width + 12, 48)
-				else
-					faker:SetWidth(408)
-					local numLines = faker:GetNumLines()
-					BigInputBox:SetSize(420, 26 + 22*numLines)
-					self:SetSize(408, 22*numLines)
-				end
-			end
-		end)
+		-- Store the defaults as constants
+		BigInputBox.defaultWidth = math_round(BigInputBox:GetWidth())
+		BigInputBox.defaultHeight = math_round(BigInputBox:GetHeight())
+		BigInputBox.editBox.defaultWidth = math_round(BigInputBox.editBox:GetWidth())
+		BigInputBox.editBox.defaultHeight = math_round(BigInputBox.editBox:GetHeight())
 
 		-- Embed a few extra metods in our inputbox.
 		for method,func in pairs(InputBox) do
@@ -335,6 +335,9 @@ Private.OnEvent = function(self, event, ...)
 		-- Give it a nice blink speed, and post-hook showing.
 		BigInputBox.editBox:SetBlinkSpeed(.5)
 		BigInputBox.editBox:HookScript("OnShow", InputBox.OnPostShow)
+
+		-- Need to hook this, not replace, or we will break spell casts.
+		BigInputBox.editBox:HookScript("OnTextChanged", InputBox.OnPostTextChanged)
 
 		-- Piggyback on the blizzard chat header updates 
 		-- to figure out what label and colors to use.

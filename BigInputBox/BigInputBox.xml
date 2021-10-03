@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
 	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="FULLSCREEN" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
-		<Size x="420" y="48"/>
+		<Size x="440" y="42"/>
 		<Anchors>
 			<Anchor point="BOTTOM" x="0" y="330"/>
 		</Anchors>
@@ -30,7 +30,7 @@
 		</Scripts>
 		<Frames>
 			<Frame parentKey="uiHider" hidden="true" />
-			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" toplevel="false" hidden="true">
+			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" multiLine="true" toplevel="false" hidden="true">
 				<Size x="408" y="22"/>
 				<Anchors>
 					<Anchor point="CENTER"/>
@@ -40,8 +40,8 @@
 					<Frame mixin="BigInputBoxBackdropTemplateMixin" parentKey="backdrop" hidden="true" />
 					<Frame name="$parentBackdrop" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Backdrop" frameStrata="FULLSCREEN" frameLevel="5">
 						<Anchors>
-							<Anchor point="TOPLEFT" x="-24" y="30"/>
-							<Anchor point="BOTTOMRIGHT" x="24" y="-30"/>
+							<Anchor point="TOPLEFT" x="-34" y="30"/>
+							<Anchor point="BOTTOMRIGHT" x="34" y="-30"/>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
@@ -58,8 +58,8 @@
 					</Frame>
 					<Frame name="$parentBorder" mixin="BigInputBoxBackdropTemplateMixin" parentKey="Border" frameStrata="FULLSCREEN" frameLevel="6">
 						<Anchors>
-							<Anchor point="TOPLEFT" x="-23" y="29"/>
-							<Anchor point="BOTTOMRIGHT" x="23" y="-29"/>
+							<Anchor point="TOPLEFT" x="-33" y="29"/>
+							<Anchor point="BOTTOMRIGHT" x="33" y="-29"/>
 						</Anchors>
 						<Scripts>
 							<OnLoad>
