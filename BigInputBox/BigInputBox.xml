@@ -30,7 +30,7 @@
 		</Scripts>
 		<Frames>
 			<Frame parentKey="uiHider" hidden="true" />
-			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" multiLine="true" toplevel="false" hidden="true">
+			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" multiLine="false" toplevel="false" hidden="true">
 				<Size x="408" y="22"/>
 				<Anchors>
 					<Anchor point="CENTER"/>

@@ -274,17 +274,19 @@ local InputBox = {
 		end
 		self.faker:SetText(msg)
 
+		-- I wanted to do this with multiline boxes, 
+		-- but there are just too many bugs and incompatibilities with them.
+		-- A major problem is that multiline boxes don't support history.
 		local fullWidth = self.faker:GetUnboundedStringWidth()
 		if (fullWidth > 300) then -- no idea why it wraps at this, look into it!
-			if (fullWidth < 600) then
+			if (fullWidth < 800) then
 				local width = eW + fullWidth - 300
 				self:SetSize(width, eH)
 				BigInputBox:SetSize(w + (width - eW), h)
 			else
-				self.faker:SetWidth(eW)
-				local numLines = self.faker:GetNumLines()
-				self:SetSize(eW, eH*numLines)
-				BigInputBox:SetSize(w, (h-eH) + eH*numLines)
+				local width = eW + 800 - 300
+				self:SetSize(width, eH)
+				BigInputBox:SetSize(w + (width - eW), h)
 			end
 		else
 			self:SetSize(eW, eH)
