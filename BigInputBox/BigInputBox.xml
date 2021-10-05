@@ -1,12 +1,17 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
 	<Frame name="BigInputBox" parent="UIParent" toplevel="true" hidden="true" frameStrata="FULLSCREEN" frameLevel="5" ignoreParentScale="true" scale="0.71111111111111">
-		<Size x="440" y="42"/>
+		<Size x="360" y="42"/>
 		<Anchors>
 			<Anchor point="BOTTOM" x="0" y="330"/>
 		</Anchors>
 		<Scripts>
 			<OnLoad>
+				-- Store the defaults as constants
+				self.defaultWidth = math.floor(self:GetWidth() + .5);
+				self.defaultHeight = math.floor(self:GetHeight() + .5);
+
+				-- Load saved position
 				local db = IsAddOnLoaded("BigInputBox") and BigInputBox_DB;
 				if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
 					self:ClearAllPoints();
@@ -31,7 +36,6 @@
 		<Frames>
 			<Frame parentKey="uiHider" hidden="true" />
 			<EditBox name="$parentEditBox" inherits="ChatFrameEditBoxTemplate" parentKey="editBox" frameStrata="FULLSCREEN" frameLevel="6" autoFocus="true" ignoreArrows="false" multiLine="false" toplevel="false" hidden="true">
-				<Size x="408" y="22"/>
 				<Anchors>
 					<Anchor point="CENTER"/>
 				</Anchors>
@@ -70,6 +74,100 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
+					<Button name="$parentLanguageButton" parentKey="LanguageButton" frameStrata="FULLSCREEN" frameLevel="7" hidden="true">
+						<Layers>
+							<Layer level="OVERLAY" textureSubLevel="6">
+								<FontString inherits="NumberFont_Outline_Large" justifyH="CENTER" justifyV="MIDDLE" parentKey="Language">
+									<Size x="0" y="0"/>
+									<Shadow>
+										<Offset>
+											<AbsDimension x="0" y="0"/>
+										</Offset>
+										<Color a="0" r="0" g="0" b="0"/>
+									</Shadow>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								local editBox = self:GetParent();
+
+								self.Language:ClearAllPoints();
+								self.Language:SetPoint("TOP", editBox, "BOTTOM", 0, -16);
+								self.Language:SetFont(self.Language:GetFont(), 16, "THINOUTLINE");
+
+								self:SetAllPoints(self.Language);
+								self.currentLanguageIndex = 1;
+
+								-- These can be nil, but the events below will update them.
+								editBox.defaultLanguage = GetDefaultLanguage();
+								editBox.alternativeDefaultLanguage = GetAlternativeDefaultLanguage();
+								editBox.language, editBox.languageID = GetDefaultLanguage();
+
+								self.LoadLanguages = function(self)
+									for i = 1,GetNumLanguages() do
+										local language, languageID = GetLanguageByIndex(i);
+										if (language == editBox.defaultLanguage) then
+											self.currentLanguageIndex = i;
+										end
+									end
+									editBox.language, editBox.languageID = GetLanguageByIndex(self.currentLanguageIndex);
+								end
+
+								self.Update = function(self)
+									editBox.language, editBox.languageID = GetLanguageByIndex(self.currentLanguageIndex);
+									self.Language:SetText(editBox.language)
+								end
+
+								self:SetScript("OnEvent", function(self, event, ...) 
+									if (event == "PLAYER_ENTERING_WORLD") then
+										editBox.defaultLanguage = GetDefaultLanguage();
+										editBox.alternativeDefaultLanguage = GetAlternativeDefaultLanguage();
+										self:LoadLanguages();
+
+									elseif (event == "LANGUAGE_LIST_CHANGED") then
+										self:LoadLanguages();
+
+									elseif (event == "NEUTRAL_FACTION_SELECT_RESULT") then
+										editBox.defaultLanguage = GetDefaultLanguage();
+										editBox.alternativeDefaultLanguage = GetAlternativeDefaultLanguage();
+
+									elseif (event == "ALTERNATIVE_DEFAULT_LANGUAGE_CHANGED") then
+										editBox.alternativeDefaultLanguage = GetAlternativeDefaultLanguage();
+									end
+
+									self:Update();
+								end)
+
+								self:RegisterEvent("PLAYER_ENTERING_WORLD");
+								self:RegisterEvent("LANGUAGE_LIST_CHANGED");
+								self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
+								self:RegisterEvent("ALTERNATIVE_DEFAULT_LANGUAGE_CHANGED");
+
+							</OnLoad>
+							<OnShow>
+								self:Update();
+							</OnShow>
+							<OnLeave>
+								local editBox = self:GetParent();
+								if (not editBox:IsMouseOver()) and (editBox.language == editBox.defaultLanguage) then
+									self:Hide();
+								end
+							</OnLeave>
+							<OnClick>
+								local editBox = self:GetParent();
+								editBox:ToggleInputLanguage();
+								editBox:SetFocus();
+
+								self.currentLanguageIndex = self.currentLanguageIndex + 1;
+								if (self.currentLanguageIndex > GetNumLanguages()) then
+									self.currentLanguageIndex = 1;
+								end
+
+								self:Update();
+							</OnClick>
+						</Scripts>
+					</Button>
 				</Frames>
 				<Layers>
 					<Layer level="OVERLAY" textureSubLevel="6">
@@ -89,11 +187,42 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
+
+						-- Need this for resizing.
+						for i=1,self:GetNumRegions() do
+							local j = select(i, self:GetRegions());
+							if (j:IsObjectType("FontString")) then
+								local foundKey; 
+								for k,l in pairs(self) do
+									if self[k] == j then
+										foundKey = true;
+										break;
+									end
+								end
+								if (not foundKey) then
+									self.fontString = j; -- the unhashed entry is our fontstring
+									break;
+								end
+							end
+						end
+
+						-- Store the defaults as constants relative to parent
+						self.defaultWidth = math.floor(self:GetParent():GetWidth() + .5) - 32;
+						self.defaultHeight = math.floor(self:GetParent():GetHeight() + .5) - 20;
+
+						-- The min can't be larger, the inputbox textfield autowraps
+						-- for no apparent reason around that size. Looking into it.
+						self.minWidth, self.maxWidth = 300, 660;
+
+						-- Size the box
+						self:SetSize(self.defaultWidth, self.defaultHeight); 
+
+						-- Give it a nice blink speed.
+						self:SetBlinkSpeed(.5)
+
 						-- Various flags and methods for compatibility
 						self.chatFrame = self:GetParent();
-						self.chatFrame.AddMessage = function(frame, ...) 
-							DEFAULT_CHAT_FRAME:AddMessage(...)
-						end;
+						self.chatFrame.AddMessage = function(frame, ...) DEFAULT_CHAT_FRAME:AddMessage(...) end;
 						self.chatLanguage = GetDefaultLanguage();
 						self:SetAttribute("chatType", "SAY");
 						self:SetAttribute("stickyType", "SAY");
@@ -101,17 +230,17 @@
 						self.addSpaceToAutoComplete = true;
 						self.addHighlightedText = true;
 
-						local ChatEditAutoComplete = function(editBox, fullText, nameInfo, ambiguatedName)
-							if hash_ChatTypeInfoList[string.upper(editBox.command)] == "SMART_WHISPER" then
+						local ChatEditAutoComplete = function(self, fullText, nameInfo, ambiguatedName)
+							if hash_ChatTypeInfoList[string.upper(self.command)] == "SMART_WHISPER" then
 								if nameInfo.bnetID ~= nil and nameInfo.bnetID ~= 0 then
-									editBox:SetAttribute("tellTarget", nameInfo.name);
-									editBox:SetAttribute("chatType", "BN_WHISPER");
+									self:SetAttribute("tellTarget", nameInfo.name);
+									self:SetAttribute("chatType", "BN_WHISPER");
 								else
-									editBox:SetAttribute("tellTarget", ambiguatedName);
-									editBox:SetAttribute("chatType", "WHISPER");
+									self:SetAttribute("tellTarget", ambiguatedName);
+									self:SetAttribute("chatType", "WHISPER");
 								end
-								editBox:SetText("");
-								ChatEdit_UpdateHeader(editBox);
+								self:SetText("");
+								ChatEdit_UpdateHeader(self);
 								return true;
 							end
 							return false;
@@ -133,6 +262,23 @@
 						self:SetTextInsets(0,0,0,0);
 						self.SetTextInsets = function() end
 
+						-- Orcs and Humans speak their own languages, Orcish and Common.
+						-- All other races have those, plus their own.
+						local numLanguages = GetNumLanguages();
+						if (numLanguages > 1) then
+							self:SetHitRectInsets(0,0,0,-32);
+							self:SetScript("OnEnter", function(self) 
+								self.LanguageButton:Show()
+							end)
+							self:SetScript("OnLeave", function(self) 
+								if (not self.LanguageButton:IsMouseOver()) then
+									if (self.language == self.defaultLanguage) then
+										self.LanguageButton:Hide();
+									end
+								end
+							end)
+						end
+
 						for _,item in ipairs({ "focusLeft", "focusRight", "focusMid" }) do
 							if (self[item]) then 
 								self[item]:SetAlpha(0); 
@@ -153,6 +299,10 @@
 						ACTIVE_CHAT_EDIT_BOX = self; -- taint?
 					</OnEditFocusGained>
 					<OnEditFocusLost>
+						-- Ignore this, the button will return the focus to us.
+						if (self.LanguageButton:IsMouseOver()) then
+							return
+						end
 						if (not self.escapePressed) then
 							self.lostFocus = true;
 						end

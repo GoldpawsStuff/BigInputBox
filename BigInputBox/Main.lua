@@ -225,6 +225,7 @@ local InputBox = {
 		self.Backdrop:SetBackdropBorderColor(r*.1, g*.1, b*.1, .75)
 		self.Border:SetBackdropBorderColor(r, g, b, .85)
 		self.Label:SetTextColor(r, g, b, 1)
+		self.LanguageButton.Language:SetTextColor(r, g, b, 1)
 
 		local label
 		if (chatType == "WHISPER") or (chatType == "BN_WHISPER") then
@@ -258,39 +259,44 @@ local InputBox = {
 	
 	OnPostTextChanged = function(self)
 		local msg = self:GetText()
-		local w = math_round(BigInputBox.defaultWidth)
-		local h = math_round(BigInputBox.defaultHeight)
-		local eW = math_round(BigInputBox.editBox.defaultWidth)
-		local eH = math_round(BigInputBox.editBox.defaultHeight)
+		local parent = self:GetParent()
 
 		-- The text in the input box will auto-wrap 
 		-- no matter what settings we give the fontstring, 
 		-- so we need a copy of it to get correct measurements.
-		if (not self.faker) then
-			self.faker = BigInputBox:CreateFontString()
-			self.faker:SetFontObject(NumberFont_Outline_Large)
-			self.faker:SetFont(self.faker:GetFont(), eH, "THINOUTLINE")
-			self.faker:SetWidth(eW)
-		end
-		self.faker:SetText(msg)
+		-- 
+		-- *Update: 
+		-- The editbox object resizes, wraps and truncates 
+		-- beyond our control, so this solution doesn't actually work.
+		-- We need to relate to the width of what blizzard decides to show us.
+		-- 
+		--if (not self.faker) then
+		--	self.faker = parent:CreateFontString()
+		--	self.faker:SetFontObject(NumberFont_Outline_Large)
+		--	self.faker:SetFont(self.faker:GetFont(), self.defaultHeight, "THINOUTLINE")
+		--	self.faker:SetWidth(self.defaultWidth)
+		--end
+		--self.faker:SetText(msg)
 
 		-- I wanted to do this with multiline boxes, 
 		-- but there are just too many bugs and incompatibilities with them.
 		-- A major problem is that multiline boxes don't support history.
-		local fullWidth = self.faker:GetUnboundedStringWidth()
-		if (fullWidth > 300) then -- no idea why it wraps at this, look into it!
-			if (fullWidth < 660) then
-				local width = eW + fullWidth - 300
-				self:SetSize(width, eH)
-				BigInputBox:SetSize(w + (width - eW), h)
+		-- 
+		--local fullWidth = self.faker:GetUnboundedStringWidth()
+		local fullWidth = self.fontString:GetStringWidth()
+		if (fullWidth > self.minWidth) then 
+			if (fullWidth < self.maxWidth) then
+				local width = self.defaultWidth + fullWidth - self.minWidth
+				self:SetSize(width, self.defaultHeight)
+				parent:SetSize(parent.defaultWidth + (width - self.defaultWidth), parent.defaultHeight)
 			else
-				local width = eW + 660 - 300
-				self:SetSize(width, eH)
-				BigInputBox:SetSize(w + (width - eW), h)
+				local width = self.defaultWidth + self.maxWidth - self.minWidth
+				self:SetSize(width, self.defaultHeight)
+				parent:SetSize(parent.defaultWidth + (width - self.defaultWidth), parent.defaultHeight)
 			end
 		else
-			self:SetSize(eW, eH)
-			BigInputBox:SetSize(w, h)
+			self:SetSize(self.defaultWidth, self.defaultHeight)
+			parent:SetSize(parent.defaultWidth, parent.defaultHeight)
 		end
 	end
 
@@ -323,23 +329,16 @@ Private.OnEvent = function(self, event, ...)
 		-- Only ever call this once. 
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
-		-- Store the defaults as constants
-		BigInputBox.defaultWidth = math_round(BigInputBox:GetWidth())
-		BigInputBox.defaultHeight = math_round(BigInputBox:GetHeight())
-		BigInputBox.editBox.defaultWidth = math_round(BigInputBox.editBox:GetWidth())
-		BigInputBox.editBox.defaultHeight = math_round(BigInputBox.editBox:GetHeight())
-
 		-- Embed a few extra metods in our inputbox.
 		for method,func in pairs(InputBox) do
 			BigInputBox.editBox[method] = func
 		end
 
-		-- Give it a nice blink speed, and post-hook showing.
-		BigInputBox.editBox:SetBlinkSpeed(.5)
-		BigInputBox.editBox:HookScript("OnShow", InputBox.OnPostShow)
-
 		-- Need to hook this, not replace, or we will break spell casts.
-		BigInputBox.editBox:HookScript("OnTextChanged", InputBox.OnPostTextChanged)
+		-- The execution path leading to spellcasts needs to be unchanged.
+		BigInputBox.editBox:HookScript("OnShow", InputBox.OnPostShow)
+		--BigInputBox.editBox:HookScript("OnTextChanged", InputBox.OnPostTextChanged)
+		BigInputBox.editBox:HookScript("OnCursorChanged", InputBox.OnPostTextChanged) -- more reliable
 
 		-- Piggyback on the blizzard chat header updates 
 		-- to figure out what label and colors to use.
