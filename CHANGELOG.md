@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.16-Release] 2021-10-17
+### Fixed
+- The editbox will no longer bug out from the lack of pandas in the classics. 
+
 ## [1.0.15-Release] 2021-09-05
 ### Added
 - You can now choose your chat language by hovering the cursor above the editbox and clicking the language text which appears just below the box. Clicking it cycles through your available languages.

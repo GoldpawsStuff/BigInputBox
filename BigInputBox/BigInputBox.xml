@@ -161,8 +161,12 @@
 
 								self:RegisterEvent("PLAYER_ENTERING_WORLD");
 								self:RegisterEvent("LANGUAGE_LIST_CHANGED");
-								self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
 								self:RegisterEvent("ALTERNATIVE_DEFAULT_LANGUAGE_CHANGED");
+
+								-- Pandas don't live in the classics.
+								if (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) then
+									self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
+								end 
 
 							</OnLoad>
 							<OnShow>
