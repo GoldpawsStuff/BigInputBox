@@ -375,6 +375,7 @@
 							self:GetParent():SetPoint("BOTTOM", 0, 330);
 
 							local point, offsetX, offsetY = self:GetParent().editBox:GetParsedPosition();
+							BigInputBox_DB = BigInputBox_DB or {};
 							BigInputBox_DB.point = point;
 							BigInputBox_DB.offsetX = offsetX;
 							BigInputBox_DB.offsetY = offsetY;
@@ -390,6 +391,7 @@
 
 						-- Save the position, call lua callbacks to store and calculate.
 						local point, offsetX, offsetY = self:GetParent().editBox:GetParsedPosition();
+						BigInputBox_DB = BigInputBox_DB or {};
 						BigInputBox_DB.point = point;
 						BigInputBox_DB.offsetX = offsetX;
 						BigInputBox_DB.offsetY = offsetY;
