@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.20-Release] 2021-11-17
+- Bump Classic Era toc to client patch 1.14.1.
+
 ## [1.0.19-Release] 2021-11-05
 ### Fixed
 - Fixed uncreated saved settings database, that sometimes would prevent repositioning.
