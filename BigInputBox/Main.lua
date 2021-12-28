@@ -84,12 +84,15 @@ end)({
 local pairs = pairs
 local select = select
 local string_lower = string.lower
+local string_match = string.match
 local string_gsub = string.gsub
 local string_upper = string.upper
+local string_sub = string.sub
 local table_insert = table.insert
 
 -- WoW API
 -----------------------------------------------------------
+local C_BattleNet = C_BattleNet
 local ChatTypeInfo = ChatTypeInfo
 local ClearOverrideBindings = ClearOverrideBindings
 local CreateFrame = CreateFrame
@@ -231,7 +234,17 @@ local InputBox = {
 		if (chatType == "WHISPER") or (chatType == "BN_WHISPER") then
 			local target = self:GetAttribute("tellTarget")
 			if (target) then
-				target = string_gsub(target, "(%a)([%w_']*)", capitalize)
+				local id = tonumber(string_match(target, "|Kq(%d+)"))
+				if (id) and (C_BattleNet) then
+					-- Real names are protected, 
+					-- meaning they can only be directly printed, 
+					-- not parsed or otherwise accessed.
+					local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
+					target = accountInfo.battleTag 
+					target = string_gsub(target, "(.+)#(%d+)", "%1|cff666666#|r|cff888888%2|r")
+				else
+					target = string_gsub(target, "(%a)([%w_']*)", capitalize)
+				end
 				label = "|cffad2424@|r"..target
 			end
 		elseif (chatType == "CHANNEL") then
