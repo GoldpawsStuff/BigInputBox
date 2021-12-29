@@ -234,12 +234,14 @@ local InputBox = {
 		if (chatType == "WHISPER") or (chatType == "BN_WHISPER") then
 			local target = self:GetAttribute("tellTarget")
 			if (target) then
+				-- Real names are protected, 
+				-- meaning they can only be directly printed, 
+				-- not parsed or otherwise accessed.
 				local id = tonumber(string_match(target, "|Kq(%d+)"))
 				if (id) and (C_BattleNet) then
-					-- Real names are protected, 
-					-- meaning they can only be directly printed, 
-					-- not parsed or otherwise accessed.
-					local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
+					-- This one returns wrong friend sometimes.
+					--local accountInfo = C_BattleNet.GetFriendAccountInfo(id) 
+					local accountInfo = C_BattleNet.GetAccountInfoByID(id)
 					target = accountInfo.battleTag 
 					target = string_gsub(target, "(.+)#(%d+)", "%1|cff666666#|r|cff888888%2|r")
 				else

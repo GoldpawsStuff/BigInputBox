@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.22-Release] 2021-12-29
+### Fixed
+- The label on the input box when talking to battle.net friends was sometimes wrong after yesterday's update, using a different API call now, that seems fine so far.
+
 ## [1.0.21-Release] 2021-12-28
 ### Changed
 - Better display of battle.net friend names. We can NOT show actual names, as this is protected information not available to the addon API. We can show the battleTag, and try to do this in a more visually pleasing manner now. 
