@@ -87,7 +87,6 @@ local string_lower = string.lower
 local string_match = string.match
 local string_gsub = string.gsub
 local string_upper = string.upper
-local string_sub = string.sub
 local table_insert = table.insert
 
 -- WoW API
@@ -96,6 +95,7 @@ local C_BattleNet = C_BattleNet
 local ChatTypeInfo = ChatTypeInfo
 local ClearOverrideBindings = ClearOverrideBindings
 local CreateFrame = CreateFrame
+local BNet_GetBNetIDAccount = BNet_GetBNetIDAccount
 local GetBindingKey = GetBindingKey
 local SetOverrideBindingClick = SetOverrideBindingClick
 
@@ -239,10 +239,19 @@ local InputBox = {
 				-- not parsed or otherwise accessed.
 				local id = tonumber(string_match(target, "|Kq(%d+)"))
 				if (id) and (C_BattleNet) then
-					-- This one returns wrong friend sometimes.
-					--local accountInfo = C_BattleNet.GetFriendAccountInfo(id) 
-					local accountInfo = C_BattleNet.GetAccountInfoByID(id)
-					target = accountInfo.battleTag 
+					local bnetID = BNet_GetBNetIDAccount and BNet_GetBNetIDAccount(target)
+					if (bnetID) then
+						local accountInfo = C_BattleNet.GetAccountInfoByID(bnetID)
+						if (accountInfo) then
+							target = accountInfo.battleTag
+						end
+					else
+						local accountInfo = C_BattleNet.GetFriendAccountInfo(id) 
+						if (accountInfo) then
+							target = accountInfo.battleTag
+						end
+					end
+					--print(BNet_GetBNetIDAccount(target), chatType, target:gsub("|", "||"), id)
 					target = string_gsub(target, "(.+)#(%d+)", "%1|cff666666#|r|cff888888%2|r")
 				else
 					target = string_gsub(target, "(%a)([%w_']*)", capitalize)
