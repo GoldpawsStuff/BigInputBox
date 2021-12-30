@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.23-Release] 2021-12-30
+### Fixed
+- Separating between battleTag and bnet friends better, hoping to finally have fixed the "wrong friend name" problem.
+
 ## [1.0.22-Release] 2021-12-29
 ### Fixed
 - The label on the input box when talking to battle.net friends was sometimes wrong after yesterday's update, using a different API call now, that seems fine so far.
