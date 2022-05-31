@@ -1,8 +1,11 @@
 # BigInputBox Change Log
 All notable changes to this project will be documented in this file. Be aware that the [Unreleased] features are not yet available in the official tagged builds.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.0.26-Release] 2022-05-31
+- Bump toc to WoW client patch 9.2.5.
 
 ## [1.0.25-Release] 2022-02-23
 - ToC bumps and license update.
@@ -20,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.21-Release] 2021-12-28
 ### Changed
-- Better display of battle.net friend names. We can NOT show actual names, as this is protected information not available to the addon API. We can show the battleTag, and try to do this in a more visually pleasing manner now. 
+- Better display of battle.net friend names. We can NOT show actual names, as this is protected information not available to the addon API. We can show the battleTag, and try to do this in a more visually pleasing manner now.
 
 ## [1.0.20-Release] 2021-11-17
 - Bump Classic Era toc to client patch 1.14.1.
@@ -37,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.16-Release] 2021-10-17
 ### Fixed
-- The editbox will no longer bug out from the lack of pandas in the classics. 
+- The editbox will no longer bug out from the lack of pandas in the classics.
 
 ## [1.0.15-Release] 2021-09-05
 ### Added
@@ -67,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The number and name of numbered channels should now be visible above the input box.
 
 ## [1.0.8-Release] 2021-05-17
-- Extra push needed because the bigwigs packager changed its API from using "bc" to calling it "bcc". 
+- Extra push needed because the bigwigs packager changed its API from using "bc" to calling it "bcc".
 
 ## [1.0.7-Release] 2021-05-12
 ### Fixed
