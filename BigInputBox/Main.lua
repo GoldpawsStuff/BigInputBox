@@ -28,24 +28,24 @@ local Addon, Private = ...
 
 -- Localization system.
 -----------------------------------------------------------
--- Do not modify the function, 
+-- Do not modify the function,
 -- just the locales in the table below!
-local L = (function(tbl,defaultLocale) 
+local L = (function(tbl,defaultLocale)
 	local gameLocale = GetLocale() -- The locale currently used by the game client.
 	local L = tbl[gameLocale] or tbl[defaultLocale] -- Get the localization for the current locale, or use your default.
 	-- Replace the boolean 'true' with the key,
 	-- to simplify locale creation and reduce space needed.
-	for i in pairs(L) do 
-		if (L[i] == true) then 
+	for i in pairs(L) do
+		if (L[i] == true) then
 			L[i] = i
 		end
-	end 
-	-- If the game client is in another locale than your default, 
-	-- fill in any missing localization in the client's locale 
+	end
+	-- If the game client is in another locale than your default,
+	-- fill in any missing localization in the client's locale
 	-- with entries from your default locale.
-	if (gameLocale ~= defaultLocale) then 
-		for i,msg in pairs(tbl[defaultLocale]) do 
-			if (not L[i]) then 
+	if (gameLocale ~= defaultLocale) then
+		for i,msg in pairs(tbl[defaultLocale]) do
+			if (not L[i]) then
 				-- Replace the boolean 'true' with the key,
 				-- to simplify locale creation and reduce space needed.
 				L[i] = (msg == true) and i or msg
@@ -53,7 +53,7 @@ local L = (function(tbl,defaultLocale)
 		end
 	end
 	return L
-end)({ 
+end)({
 	-- ENTER YOUR LOCALIZATION HERE!
 	-----------------------------------------------------------
 	-- * Note that you MUST include a full table for your primary/default locale!
@@ -72,11 +72,11 @@ end)({
 	["ruRU"] = {},
 	["zhCN"] = {},
 	["zhTW"] = {}
-	
+
 -- The primary/default locale of your addon.
 -- * You should change this code to your default locale.
 -- * Note that you MUST include a full table for your primary/default locale!
-}, "enUS") 
+}, "enUS")
 
 
 -- Lua API
@@ -126,38 +126,38 @@ local math_round = function(value, precision)
 		value = (value + .5) - (value + .5)%1
 		value = value / 10^precision
 		return value
-	else 
+	else
 		return (value + .5) - (value + .5)%1
-	end 
+	end
 end
 
 -- Convert a coordinate within a frame to a usable position
 local parse = function(parentWidth, parentHeight, x, y, bottomOffset, leftOffset, topOffset, rightOffset)
-	if (y < parentHeight * 1/3) then 
-		if (x < parentWidth * 1/3) then 
+	if (y < parentHeight * 1/3) then
+		if (x < parentWidth * 1/3) then
 			return "BOTTOMLEFT", leftOffset, bottomOffset
-		elseif (x > parentWidth * 2/3) then 
+		elseif (x > parentWidth * 2/3) then
 			return "BOTTOMRIGHT", rightOffset, bottomOffset
-		else 
+		else
 			return "BOTTOM", x - parentWidth/2, bottomOffset
-		end 
-	elseif (y > parentHeight * 2/3) then 
-		if (x < parentWidth * 1/3) then 
+		end
+	elseif (y > parentHeight * 2/3) then
+		if (x < parentWidth * 1/3) then
 			return "TOPLEFT", leftOffset, topOffset
-		elseif x > parentWidth * 2/3 then 
+		elseif x > parentWidth * 2/3 then
 			return "TOPRIGHT", rightOffset, topOffset
-		else 
+		else
 			return "TOP", x - parentWidth/2, topOffset
-		end 
-	else 
-		if (x < parentWidth * 1/3) then 
+		end
+	else
+		if (x < parentWidth * 1/3) then
 			return "LEFT", leftOffset, y - parentHeight/2
-		elseif (x > parentWidth * 2/3) then 
+		elseif (x > parentWidth * 2/3) then
 			return "RIGHT", rightOffset, y - parentHeight/2
-		else 
+		else
 			return "CENTER", x - parentWidth/2, y - parentHeight/2
-		end 
-	end 
+		end
+	end
 end
 
 local capitalize = function(first, rest)
@@ -215,7 +215,7 @@ local InputBox = {
 		-- Figure out the point within the given coordinate space
 		local point, offsetX, offsetY = parse(uiWidth, uiHeight, x, y, bottom, left, top, right)
 
-		-- Convert coordinates to the frame's scale. 
+		-- Convert coordinates to the frame's scale.
 		return point, offsetX/frameScale, offsetY/frameScale
 	end,
 
@@ -234,8 +234,8 @@ local InputBox = {
 		if (chatType == "WHISPER") or (chatType == "BN_WHISPER") then
 			local target = self:GetAttribute("tellTarget")
 			if (target) then
-				-- Real names are protected, 
-				-- meaning they can only be directly printed, 
+				-- Real names are protected,
+				-- meaning they can only be directly printed,
 				-- not parsed or otherwise accessed.
 				local id = tonumber(string_match(target, "|Kq(%d+)"))
 				if (id) and (C_BattleNet) then
@@ -246,7 +246,7 @@ local InputBox = {
 							target = accountInfo.battleTag
 						end
 					else
-						local accountInfo = C_BattleNet.GetFriendAccountInfo(id) 
+						local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
 						if (accountInfo) then
 							target = accountInfo.battleTag
 						end
@@ -273,27 +273,27 @@ local InputBox = {
 	end,
 
 	-- Fix font and raise the box on show.
-	OnPostShow = function(self) 
+	OnPostShow = function(self)
 		self:SetFont(self:GetFont(), math_round(BigInputBox.editBox.defaultHeight), "THINOUTLINE")
 		self:UpdateChatType()
 		self:SetFocus()
 		self:Raise()
 		self:SetAlpha(1)
-	end, 
-	
+	end,
+
 	OnPostTextChanged = function(self)
 		local msg = self:GetText()
 		local parent = self:GetParent()
 
-		-- The text in the input box will auto-wrap 
-		-- no matter what settings we give the fontstring, 
+		-- The text in the input box will auto-wrap
+		-- no matter what settings we give the fontstring,
 		-- so we need a copy of it to get correct measurements.
-		-- 
-		-- *Update: 
-		-- The editbox object resizes, wraps and truncates 
+		--
+		-- *Update:
+		-- The editbox object resizes, wraps and truncates
 		-- beyond our control, so this solution doesn't actually work.
 		-- We need to relate to the width of what blizzard decides to show us.
-		-- 
+		--
 		--if (not self.faker) then
 		--	self.faker = parent:CreateFontString()
 		--	self.faker:SetFontObject(NumberFont_Outline_Large)
@@ -302,13 +302,13 @@ local InputBox = {
 		--end
 		--self.faker:SetText(msg)
 
-		-- I wanted to do this with multiline boxes, 
+		-- I wanted to do this with multiline boxes,
 		-- but there are just too many bugs and incompatibilities with them.
 		-- A major problem is that multiline boxes don't support history.
-		-- 
+		--
 		--local fullWidth = self.faker:GetUnboundedStringWidth()
 		local fullWidth = self.fontString:GetStringWidth()
-		if (fullWidth > self.minWidth) then 
+		if (fullWidth > self.minWidth) then
 			if (fullWidth < self.maxWidth) then
 				local width = self.defaultWidth + fullWidth - self.minWidth
 				self:SetSize(width, self.defaultHeight)
@@ -332,8 +332,8 @@ Private.AssignBindActions = function(self, overrideButton, ...)
 	ClearOverrideBindings(overrideButton)
 	for i = 1,select("#", ...) do
 		local bindAction = select(i,...)
-		for keyNumber = 1, select("#", GetBindingKey(bindAction)) do 
-			local key = select(keyNumber, GetBindingKey(bindAction)) 
+		for keyNumber = 1, select("#", GetBindingKey(bindAction)) do
+			local key = select(keyNumber, GetBindingKey(bindAction))
 			if (key and (key ~= "")) then
 				SetOverrideBindingClick(overrideButton, true, key, overrideButton:GetName())
 			end
@@ -350,7 +350,7 @@ end
 Private.OnEvent = function(self, event, ...)
 	if (event == "PLAYER_ENTERING_WORLD") then
 
-		-- Only ever call this once. 
+		-- Only ever call this once.
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
 		-- Embed a few extra metods in our inputbox.
@@ -364,9 +364,9 @@ Private.OnEvent = function(self, event, ...)
 		--BigInputBox.editBox:HookScript("OnTextChanged", InputBox.OnPostTextChanged)
 		BigInputBox.editBox:HookScript("OnCursorChanged", InputBox.OnPostTextChanged) -- more reliable
 
-		-- Piggyback on the blizzard chat header updates 
+		-- Piggyback on the blizzard chat header updates
 		-- to figure out what label and colors to use.
-		hooksecurefunc("ChatEdit_UpdateHeader", function(editBox) 
+		hooksecurefunc("ChatEdit_UpdateHeader", function(editBox)
 			if (editBox == BigInputBox.editBox) then
 				BigInputBox.editBox:UpdateChatType()
 			end
@@ -374,16 +374,16 @@ Private.OnEvent = function(self, event, ...)
 
 		-- Borrow all the chat input opening keybinds.
 		--	"OPENCHAT"			-- The regular button to open chat.
-		--	"REPLY"			 	-- Reply to whomever whispered you last. 
+		--	"REPLY"			 	-- Reply to whomever whispered you last.
 		--	"REPLY2"			-- Re-whisper the same person you whispered last.
 		--	"OPENCHATSLASH"		-- We can't do this from an addon without taint, so skipping it for now.
 		self:AssignBindActions(BigInputBoxToggleButton, "OPENCHAT")
 		self:AssignBindActions(BigInputBoxReplyButton, "REPLY")
 		self:AssignBindActions(BigInputBoxRewhisperButton, "REPLY2")
 
-	elseif (event == "UPDATE_BINDINGS") then 
-		-- This happens when players change bindings, 
-		-- or if the saved ones for some reason is loaded late. 
+	elseif (event == "UPDATE_BINDINGS") then
+		-- This happens when players change bindings,
+		-- or if the saved ones for some reason is loaded late.
 		self:AssignBindActions(BigInputBoxToggleButton, "OPENCHAT")
 		self:AssignBindActions(BigInputBoxReplyButton, "REPLY")
 		self:AssignBindActions(BigInputBoxRewhisperButton, "REPLY2")
@@ -415,15 +415,18 @@ end
 
 	-- Let's create some constants for faster lookups
 	local MAJOR,MINOR,PATCH = string.split(".", currentClientPatch)
+	MAJOR = tonumber(MAJOR)
 
 	-- These are defined in FrameXML/BNet.lua
 	-- *Using blizzard constants if they exist,
 	-- using string parsing as a fallback.
-	Private.IsClassic = (WOW_PROJECT_ID) and (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) or (tonumber(MAJOR) == 1)
-	Private.IsRetail = (WOW_PROJECT_ID) and (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) or (tonumber(MAJOR) >= 9)
-	Private.IsClassicTBC = tonumber(MAJOR) == 2
-	Private.IsRetailBFA = tonumber(MAJOR) == 8
-	Private.IsRetailShadowlands = tonumber(MAJOR) == 9
+	Private.IsRetail = MAJOR >= 9
+	Private.IsClassic = MAJOR == 1
+	Private.IsClassicTBC = MAJOR == 2
+	Private.IsClassicWotLK = MAJOR == 3
+	Private.IsRetailBFA = MAJOR == 8
+	Private.IsRetailShadowlands = MAJOR == 9
+	Private.IsRetailDragonflight = MAJOR == 10
 	Private.CurrentClientBuild = currentClientBuild -- Expose the build number too
 
 	-- Set a relative subpath to look for media files in.
@@ -433,19 +436,19 @@ end
 	end
 
 	-- Simple API calls to retrieve a media file.
-	-- Will honor the relativ subpath set above, if defined, 
+	-- Will honor the relativ subpath set above, if defined,
 	-- and will default to the addon folder itself if not.
-	-- Note that we cannot check for file or folder existence 
+	-- Note that we cannot check for file or folder existence
 	-- from within the WoW API, so you must make sure this is correct.
-	Private.GetMedia = function(self, name, type) 
+	Private.GetMedia = function(self, name, type)
 		if (Path) then
-			return ([[Interface\AddOns\%s\%s\%s.%s]]):format(Addon, Path, name, type or "tga") 
+			return ([[Interface\AddOns\%s\%s\%s.%s]]):format(Addon, Path, name, type or "tga")
 		else
-			return ([[Interface\AddOns\%s\%s.%s]]):format(Addon, name, type or "tga") 
+			return ([[Interface\AddOns\%s\%s.%s]]):format(Addon, name, type or "tga")
 		end
 	end
 
-	-- Parse chat input arguments 
+	-- Parse chat input arguments
 	local parse = function(msg)
 		msg = string.gsub(msg, "^%s+", "") -- Remove spaces at the start.
 		msg = string.gsub(msg, "%s+$", "") -- Remove spaces at the end.
@@ -455,7 +458,7 @@ end
 		else
 			return msg
 		end
-	end 
+	end
 
 	-- This methods lets you register a chat command, and a callback function or private method name.
 	-- Your callback will be called as callback(Private, editBox, commandName, ...) where (...) are all the input parameters.
@@ -469,12 +472,12 @@ end
 			if (func) then
 				func(Private, editBox, command, parse(string.lower(msg)))
 			end
-		end 
+		end
 	end
 
 	Private.GetAddOnInfo = function(self, index)
 		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(index)
-		local enabled = not(GetAddOnEnableState(UnitName("player"), index) == 0) 
+		local enabled = not(GetAddOnEnableState(UnitName("player"), index) == 0)
 		return name, title, notes, enabled, loadable, reason, security
 	end
 
@@ -491,9 +494,9 @@ end
 		end
 	end
 
-	-- This method lets you check if an addon WILL be loaded regardless of whether or not it currently is. 
-	-- This is useful if you want to check if an addon interacting with yours is enabled. 
-	-- My philosophy is that it's best to avoid addon dependencies in the toc file, 
+	-- This method lets you check if an addon WILL be loaded regardless of whether or not it currently is.
+	-- This is useful if you want to check if an addon interacting with yours is enabled.
+	-- My philosophy is that it's best to avoid addon dependencies in the toc file,
 	-- unless your addon is a plugin to another addon, that is.
 	Private.IsAddOnEnabled = function(self, target)
 		local target = string.lower(target)
@@ -520,61 +523,61 @@ end
 
 	-- Event Dispatcher and Initialization Handler
 	-----------------------------------------------------------
-	-- Assign our event script handler, 
+	-- Assign our event script handler,
 	-- which runs our initialization methods,
 	-- and dispatches event to the addon namespace.
 	self:RegisterEvent("ADDON_LOADED")
-	self:SetScript("OnEvent", function(self, event, ...) 
+	self:SetScript("OnEvent", function(self, event, ...)
 		if (event == "ADDON_LOADED") then
 			-- Nothing happens before this has fired for your addon.
-			-- When it fires, we remove the event listener 
+			-- When it fires, we remove the event listener
 			-- and call our initialization method.
 			if ((...) == Addon) then
 				-- Delete our initial registration of this event.
-				-- Note that you are free to re-register it in any of the 
-				-- addon namespace methods. 
+				-- Note that you are free to re-register it in any of the
+				-- addon namespace methods.
 				self:UnregisterEvent("ADDON_LOADED")
 				-- Call the initialization method.
 				if (Private.OnInit) then
 					Private:OnInit()
 				end
-				-- If this was a load-on-demand addon, 
+				-- If this was a load-on-demand addon,
 				-- then we might be logged in already.
-				-- If that is the case, directly run 
+				-- If that is the case, directly run
 				-- the enabling method.
 				if (IsLoggedIn()) then
 					if (Private.OnEnable) then
 						Private:OnEnable()
 					end
 				else
-					-- If this is a regular always-load addon, 
+					-- If this is a regular always-load addon,
 					-- we're not yet logged in, and must listen for this.
 					self:RegisterEvent("PLAYER_LOGIN")
 				end
-				-- Return. We do not wish to forward the loading event 
+				-- Return. We do not wish to forward the loading event
 				-- for our own addon to the namespace event handler.
 				-- That is what the initialization method exists for.
 				return
 			end
 		elseif (event == "PLAYER_LOGIN") then
-			-- This event only ever fires once on a reload, 
-			-- and anything you wish done at this event, 
+			-- This event only ever fires once on a reload,
+			-- and anything you wish done at this event,
 			-- should be put in the namespace enable method.
 			self:UnregisterEvent("PLAYER_LOGIN")
 			-- Call the enabling method.
 			if (Private.OnEnable) then
 				Private:OnEnable()
 			end
-			-- Return. We do not wish to forward this 
+			-- Return. We do not wish to forward this
 			-- to the namespace event handler.
-			return 
+			return
 		end
 		-- Forward other events than our two initialization events
-		-- to the addon namespace's event handler. 
+		-- to the addon namespace's event handler.
 		-- Note that you can always register more ADDON_LOADED
-		-- if you wish to listen for other addons loading.  
+		-- if you wish to listen for other addons loading.
 		if (Private.OnEvent) then
-			Private:OnEvent(event, ...) 
+			Private:OnEvent(event, ...)
 		end
 	end)
 end)((function() return CreateFrame("Frame", nil, WorldFrame) end)())

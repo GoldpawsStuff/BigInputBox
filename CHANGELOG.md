@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.28-Release] 2022-07-21
+- Add support for WotLK beta.
+- Bump to BCC client patch 2.5.4.
+
 ## [1.0.27-Release] 2022-07-09
 - Bump for Classic Era client patch 1.14.3.
 
