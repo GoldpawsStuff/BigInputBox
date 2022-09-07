@@ -16,22 +16,7 @@ jobs:
       - name: Checkout addon
         uses: actions/checkout@v2
 
-      - name: Package Retail
+      - name: Package
         uses: BigWigsMods/packager@master
         with:
-          args: -g retail -m .pkgmeta
-
-      - name: Package Classic
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g classic -m .pkgmeta
-
-      - name: Package BC
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g bcc -m .pkgmeta
-
-      - name: Package Wratch
-        uses: BigWigsMods/packager@v2
-        with:
-          args: -g wrath -m .pkgmeta
+          args: -m .pkgmeta
