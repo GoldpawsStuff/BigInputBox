@@ -49,9 +49,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdrop({ 
+								self:SetBackdrop({
 									bgFile = [[Interface\ChatFrame\ChatFrameBackground]],
-									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-backdrop-small.tga]], 
+									edgeFile = [[Interface\AddOns\BigInputBox\Media\rounded-backdrop-small.tga]],
 									edgeSize = 24,
 									insets = { left = 24, right = 24, top = 24, bottom = 24 }
 								});
@@ -67,8 +67,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdrop({ 
-									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-border-small.tga]], 
+								self:SetBackdrop({
+									edgeFile = [[Interface\AddOns\BigInputBox\media\rounded-border-small.tga]],
 									edgeSize = 24
 								});
 							</OnLoad>
@@ -112,10 +112,10 @@
 										self.numLanguages = GetNumLanguages();
 										if (self.numLanguages > 1) then
 											editBox:SetHitRectInsets(0,0,0,-32);
-											editBox:SetScript("OnEnter", function(self) 
+											editBox:SetScript("OnEnter", function(self)
 												self.LanguageButton:Show()
 											end)
-											editBox:SetScript("OnLeave", function(self) 
+											editBox:SetScript("OnLeave", function(self)
 												if (not self.LanguageButton:IsMouseOver()) then
 													if (self.language == self.defaultLanguage) then
 														self.LanguageButton:Hide();
@@ -140,7 +140,7 @@
 									self.Language:SetText(editBox.language)
 								end
 
-								self:SetScript("OnEvent", function(self, event, ...) 
+								self:SetScript("OnEvent", function(self, event, ...)
 									if (event == "PLAYER_ENTERING_WORLD") then
 										editBox.defaultLanguage = GetDefaultLanguage();
 										editBox.alternativeDefaultLanguage = GetAlternativeDefaultLanguage();
@@ -166,7 +166,7 @@
 								-- Pandas don't live in the classics.
 								if (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) then
 									self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
-								end 
+								end
 
 							</OnLoad>
 							<OnShow>
@@ -216,7 +216,7 @@
 						for i=1,self:GetNumRegions() do
 							local j = select(i, self:GetRegions());
 							if (j:IsObjectType("FontString")) then
-								local foundKey; 
+								local foundKey;
 								for k,l in pairs(self) do
 									if self[k] == j then
 										foundKey = true;
@@ -239,7 +239,7 @@
 						self.minWidth, self.maxWidth = 300, 660;
 
 						-- Size the box
-						self:SetSize(self.defaultWidth, self.defaultHeight); 
+						self:SetSize(self.defaultWidth, self.defaultHeight);
 
 						-- Give it a nice blink speed.
 						self:SetBlinkSpeed(.5)
@@ -271,7 +271,7 @@
 						end
 						AutoCompleteEditBox_SetCustomAutoCompleteFunction(self, ChatEditAutoComplete);
 
-						self:HookScript("OnEnterPressed", function(self) 
+						self:HookScript("OnEnterPressed", function(self)
 							self.enterPressed = true;
 							self:ClearFocus();
 							self:GetParent():Hide();
@@ -287,20 +287,20 @@
 						self.SetTextInsets = function() end
 
 						for _,item in ipairs({ "focusLeft", "focusRight", "focusMid" }) do
-							if (self[item]) then 
-								self[item]:SetAlpha(0); 
+							if (self[item]) then
+								self[item]:SetAlpha(0);
 							end
 						end
 
 						for _,item in ipairs({ "backdrop", "header", "headerSuffix", "NewcomerHint" }) do
-							if (self[item]) then 
+							if (self[item]) then
 								self[item]:SetParent(self:GetParent().uiHider);
 							end
 						end
 					</OnLoad>
 					<OnEditFocusGained>
-						self:Raise(); 
-						self:SetAlpha(1); 
+						self:Raise();
+						self:SetAlpha(1);
 						-- Setting this is needed
 						-- for items to be linked to the chat.
 						ACTIVE_CHAT_EDIT_BOX = self; -- taint?
@@ -316,7 +316,7 @@
 						self:GetParent():Hide();
 					</OnEditFocusLost>
 					<OnEscapePressed>
-						self.escapePressed = true; 
+						self.escapePressed = true;
 						self:GetParent():Hide();
 					</OnEscapePressed>
 					<OnUpdate>
