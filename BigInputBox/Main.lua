@@ -410,24 +410,22 @@ end
 	-- Private Default API
 	-- This mostly contains methods we always want available
 	-----------------------------------------------------------
-	local currentClientPatch, currentClientBuild = GetBuildInfo()
-	currentClientBuild = tonumber(currentClientBuild)
 
-	-- Let's create some constants for faster lookups
-	local MAJOR,MINOR,PATCH = string.split(".", currentClientPatch)
-	MAJOR = tonumber(MAJOR)
+	-- Addon version
+	-- *Keyword substitution requires the packager,
+	-- and does not affect direct GitHub repo pulls.
+	local version = "@project-version@"
+	if (version:find("project%-version")) then
+		version = "Development"
+	end
 
-	-- These are defined in FrameXML/BNet.lua
-	-- *Using blizzard constants if they exist,
-	-- using string parsing as a fallback.
-	Private.IsRetail = MAJOR >= 9
-	Private.IsClassic = MAJOR == 1
-	Private.IsClassicTBC = MAJOR == 2
-	Private.IsClassicWotLK = MAJOR == 3
-	Private.IsRetailBFA = MAJOR == 8
-	Private.IsRetailShadowlands = MAJOR == 9
-	Private.IsRetailDragonflight = MAJOR == 10
-	Private.CurrentClientBuild = currentClientBuild -- Expose the build number too
+	-- WoW Client versions
+	local patch, build, date, version = GetBuildInfo()
+	Private.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+	Private.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+	Private.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+	Private.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC)
+	Private.WoW10 = version >= 100000
 
 	-- Set a relative subpath to look for media files in.
 	local Path
