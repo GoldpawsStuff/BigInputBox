@@ -260,8 +260,11 @@
 									self:SetAttribute("tellTarget", nameInfo.name);
 									self:SetAttribute("chatType", "BN_WHISPER");
 								else
-									self:SetAttribute("tellTarget", ambiguatedName);
-									self:SetAttribute("chatType", "WHISPER");
+									local tellTarget = ambiguatedName or nameInfo.name;
+									if (tellTarget) then
+										self:SetAttribute("tellTarget", tellTarget);
+										self:SetAttribute("chatType", "WHISPER");
+									end
 								end
 								self:SetText("");
 								ChatEdit_UpdateHeader(self);
