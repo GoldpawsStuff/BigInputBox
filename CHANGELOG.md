@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.36-Release] 2023-03-25
+- Updated for WoW 10.0.7.
+
 ## [1.0.35-Release] 2023-02-06
 ### Fixed
 - Fixed an issue with autocomplete in classic versions of WoW.
