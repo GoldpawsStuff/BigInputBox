@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.38-Release] 2023-05-31
+- Updated addon listing icon textures for Retail.
+
 ## [1.0.37-Release] 2023-05-03
 - Updated for WoW 10.1.0.
 
