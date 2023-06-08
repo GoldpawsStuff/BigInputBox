@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Be aware th
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.39-Release] 2023-06-08
+### Changed
+- Raised the frame strata to be above various options frames.
+
 ## [1.0.38-Release] 2023-05-31
 - Updated addon listing icon textures for Retail.
 
