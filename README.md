@@ -11,8 +11,14 @@ Blizzard limitation. That would require our addon to be responsible for having p
 
 This is a part of Blizzard's anti-bot systems, as the ability for addons to do this would ultimately allows us to create bots that could cast spells through addons.
 
-## Connect & Support
-* Patreon: [patreon.com/goldpawsstuff](https://www.patreon.com/goldpawsstuff)
-* Paypal: [paypal.me/goldpawsstuff](https://www.paypal.me/goldpawsstuff)
-* Discord: [discord.gg/RwcSm8V3Dy](https://discord.gg/RwcSm8V3Dy)
-* Twitter: [@goldpawsstuff](https://twitter.com/goldpawsstuff)
+## Sponsor
+- GitHub: [github.com/sponsors/goldpawsstuff](https://github.com/sponsors/goldpawsstuff)
+- Patreon: [patreon.com/goldpawsstuff](https://www.patreon.com/goldpawsstuff)
+- Ko-fi: [ko-fi.com/GoldpawsStuff](https://ko-fi.com/goldpawsstuff)
+- BuyMeACoffee: [buymeacoffee.com/goldpawsstuff](https://www.buymeacoffee.com/goldpawsstuff)
+- Liberapay: [liberapay.com/goldpawsstuff](https://liberapay.com/goldpawsstuff)
+- Paypal: [paypal.me/goldpawsstuff](https://www.paypal.me/goldpawsstuff)
+
+## Connect
+- Discord: [discord.gg/RwcSm8V3Dy](https://discord.gg/RwcSm8V3Dy)
+- Twitter: [@goldpawsstuff](https://twitter.com/goldpawsstuff)
