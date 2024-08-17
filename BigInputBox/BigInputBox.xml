@@ -12,6 +12,7 @@
 				self.defaultHeight = math.floor(self:GetHeight() + .5);
 
 				-- Load saved position
+				local IsAddOnLoaded = IsAddOnLoaded or C_AddOns.IsAddOnLoaded
 				local db = IsAddOnLoaded("BigInputBox") and BigInputBox_DB;
 				if (db) and (db.point) and (db.offsetX) and (db.offsetX) then
 					self:ClearAllPoints();
